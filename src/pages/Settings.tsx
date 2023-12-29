@@ -19,7 +19,7 @@ const Settings: React.FC = () => {
         console.log('axios is calling');
 
         const response = await axios.get<any>(
-          'http://localhost:5000/api/admin/enitity-rang-list',
+          'http://13.233.114.61:5000/api/admin/enitity-rang-list',
         );
         if (response.data.status === 'success') {
           setRangeList(response.data.rangeList);

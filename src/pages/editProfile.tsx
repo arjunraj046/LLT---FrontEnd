@@ -54,7 +54,7 @@ const EditAgentProfile = () => {
     const fetchAgentData = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:5000/api/admin/agent/${id}`,
+          `http://13.233.114.61:5000/api/admin/agent/${id}`,
         );
         const { name, userName, email, contactNumber } =
           response.data.agentDetails;

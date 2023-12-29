@@ -51,7 +51,7 @@ const SignIn = () => {
     setCredentials(data);
     try {
       const response = await axios.post(
-        'http://localhost:5000/api/auth/login',
+        'http://13.233.114.61:5000/api/auth/login',
         credentials,
       );
       const { token, user } = response.data;

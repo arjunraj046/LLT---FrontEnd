@@ -35,7 +35,7 @@ const DashboardAgent: React.FC = () => {
       try {
         const _id = localStorage.getItem('agentID');
         const response = await axios.post<any>(
-          'http://localhost:5000/api/agent/entity',
+          'http://13.233.114.61:5000/api/agent/entity',
           { UserData, _id },
         );
         console.log('Response from POST request:', response.data);

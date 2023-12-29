@@ -24,7 +24,7 @@ const UserList: React.FC = () => {
     const fetchUserDetails = async () => {
       try {
         const response = await axios.get<any>(
-          'http://localhost:5000/api/admin/agent-list/',
+          'http://13.233.114.61:5000/api/admin/agent-list/',
         );
         setPeople(response.data?.agentList);
       } catch (error) {
