@@ -37,6 +37,9 @@ const TableTwo: React.FC = () => {
           const response = await axios.get<any>(
             'http://13.233.114.61:5000/api/admin/enitity-rang-list',
           );
+
+          console.log(response);
+
           if (response.data.status === 'success') {
             setRangeList(response.data.rangeList);
           } else {
@@ -52,8 +55,11 @@ const TableTwo: React.FC = () => {
       fetchRangeList();
       try {
         const response = await axios.get<any>(
-          'http://localhost:5000/api/admin/list-entity',
+          'http://13.233.114.61:5000/api/admin/list-entity',
         );
+
+        console.log(response);
+
         setPeople(response.data.list);
       } catch (error) {
         console.error('Error fetching user details:', error);
@@ -78,7 +84,7 @@ const TableTwo: React.FC = () => {
 
       <div className="flex flex-col">
         <div className="grid grid-cols-3 rounded-sm bg-gray-2 dark:bg-meta-4 sm:grid-cols-7 p-2.5">
-          <h5 className="text-sm font-medium uppercase xsm:text-base">
+          <h5 className="hidden text-sm font-medium uppercase xsm:text-base text-center sm:block">
             Agent Name
           </h5>
           <h5 className="text-sm font-medium uppercase xsm:text-base text-center">
@@ -87,7 +93,7 @@ const TableTwo: React.FC = () => {
           <h5 className="text-sm font-medium uppercase xsm:text-base text-center">
             Token Number
           </h5>
-          <h5 className="hidden text-sm font-medium uppercase xsm:text-base text-center sm:block">
+          <h5 className="text-sm font-medium uppercase xsm:text-base text-center">
             Count
           </h5>
           <h5 className="hidden text-sm font-medium uppercase xsm:text-base text-center sm:block">
@@ -105,7 +111,9 @@ const TableTwo: React.FC = () => {
           <div>
             {rangeList.map((range) => {
               const numberToCheck = parseInt(person.tokenNumber);
-              const isInRange = numberToCheck >= range.startRange && numberToCheck <= range.endRange;
+              const isInRange =
+                numberToCheck >= range.startRange &&
+                numberToCheck <= range.endRange;
               if (isInRange) {
                 return (
                   <div
@@ -113,7 +121,7 @@ const TableTwo: React.FC = () => {
                     className="grid grid-cols-3 border-b border-stroke dark:border-strokedark sm:grid-cols-7 p-2.5"
                     style={{ backgroundColor: range.color }}
                   >
-                    <div className="flex items-center gap-3">
+                    <div className="hidden items-center justify-center sm:flex">
                       <p className="text-black dark:text-white">
                         {person.name}
                       </p>
@@ -124,29 +132,34 @@ const TableTwo: React.FC = () => {
                       </p>
                     </div>
                     <div className="flex items-center justify-center">
-                      <p className="text-black dark:text-white">{person.tokenNumber}</p>
+                      <p className="text-black dark:text-white">
+                        {person.tokenNumber}
+                      </p>
                     </div>
-                    <div className="hidden items-center justify-center sm:flex">
+                    <div className="flex items-center justify-center">
                       <p className="text-black dark:text-white">
                         {person.count}
                       </p>
                     </div>
                     <div className="hidden items-center justify-center sm:flex">
-                      <p className="text-black dark:text-white">{person.email}</p>
+                      <p className="text-black dark:text-white">
+                        {person.email}
+                      </p>
                     </div>
                     <div className="hidden items-center justify-center sm:flex">
-                      <p className="text-black dark:text-white">{formatDate(person.date)}</p>
+                      <p className="text-black dark:text-white">
+                        {formatDate(person.date)}
+                      </p>
                     </div>
                     <div className="hidden items-center justify-center sm:flex">
-                      <p className="text-black dark:text-white">{person.contactNumber}</p>
+                      <p className="text-black dark:text-white">
+                        {person.contactNumber}
+                      </p>
                     </div>
                   </div>
                 );
               }
-              return null
-              
-              
-             
+              // return null
             })}
           </div>
         ))}
@@ -156,14 +169,6 @@ const TableTwo: React.FC = () => {
 };
 
 export default TableTwo;
-
-
-
-
-
-
-
-
 
 // (
 //   <div

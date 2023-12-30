@@ -7,7 +7,6 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm } from 'react-hook-form';
 import { showAlert } from '../../components/tosterComponents/tost';
 
-
 interface FormValues {
   startRange: number;
   endRange: number;
@@ -58,13 +57,12 @@ const FormLayout2 = () => {
       );
       console.log('User registered:', response.data);
       if (response.data.status === 'success') {
-        showAlert("New Rang is Added ! ", 'success');
+        showAlert('New Rang is Added ! ', 'success');
         navigate('/admin/settings');
       }
-    } catch (error:any) {
+    } catch (error: any) {
       console.error('Error registering user:', error);
       showAlert(error?.response?.data?.error, 'error');
-
     }
   };
 
@@ -74,7 +72,7 @@ const FormLayout2 = () => {
         <div className="rounded-xl border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
           <div className="border-b border-stroke py-4 px-6.5 dark:border-strokedark">
             <h3 className="font-medium text-black dark:text-white">
-              Entity Form
+              Range Form
             </h3>
           </div>
           <form onSubmit={handleSubmit(onSubmit)} className="p-6.5">
@@ -115,10 +113,10 @@ const FormLayout2 = () => {
               <HexColorPicker color={color} onChange={setColor} />
             </div>
 
-            <div className="flex justify-center">
+            <div className="flex justify-center m-8">
               <button
                 type="submit"
-                className="flex justify-center rounded bg-primary p-3 font-medium text-gray ml-50"
+                className="flex justify-center rounded bg-primary p-3 font-medium text-gray ml-30"
               >
                 Save
               </button>

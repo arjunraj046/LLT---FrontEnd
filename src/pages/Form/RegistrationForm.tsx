@@ -85,7 +85,7 @@ const FormLayout = () => {
         <div className="rounded-xl border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
           <div className="border-b border-stroke py-4 px-6.5 dark:border-strokedark">
             <h3 className="font-medium text-black dark:text-white">
-              Registration Form
+              Add User Form
             </h3>
           </div>
           <form onSubmit={handleSubmit(onSubmit)} className="p-6.5">
@@ -99,7 +99,7 @@ const FormLayout = () => {
                 placeholder="Enter your  name"
                 {...register('name')}
                 onChange={handleChange('name')}
-                className="w-2/3 rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
+                className="w-5/6 rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary "
               />
               {errors.name && <p className="text-red">{errors.name.message}</p>}
             </div>
@@ -113,7 +113,7 @@ const FormLayout = () => {
                 placeholder="Enter your user name"
                 {...register('userName')}
                 onChange={handleChange('userName')}
-                className="w-2/3 rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
+                className="w-5/6 rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
               />
               {errors.userName && (
                 <p className="text-red">{errors.userName.message}</p>
@@ -128,7 +128,7 @@ const FormLayout = () => {
                 placeholder="Enter your email address"
                 {...register('email')}
                 onChange={handleChange('email')}
-                className="w-2/3 rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
+                className="w-5/6 rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
               />
               {errors.email && (
                 <p className="text-red">{errors.email.message}</p>
@@ -143,7 +143,7 @@ const FormLayout = () => {
                 type="text"
                 {...register('contactNumber')}
                 onChange={handleChange('contactNumber')}
-                className="w-2/3 rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
+                className="w-5/6 rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
               />
               {errors.contactNumber && (
                 <p className="text-red">{errors.contactNumber.message}</p>
@@ -159,7 +159,7 @@ const FormLayout = () => {
                 placeholder="Enter passowrd"
                 {...register('password')}
                 onChange={handleChange('password')}
-                className="w-2/3 rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
+                className="w-5/6 rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
               />
               {errors.password && (
                 <p className="text-red">{errors.password.message}</p>
@@ -175,7 +175,7 @@ const FormLayout = () => {
                 placeholder="Enter passowrd again"
                 {...register('confirmPassword')}
                 onChange={handleChange('confirmPassword')}
-                className="w-2/3 rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
+                className="w-5/6 rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
               />
               {errors.confirmPassword && (
                 <p className="text-red">{errors.confirmPassword.message}</p>
@@ -185,7 +185,7 @@ const FormLayout = () => {
             <div className="flex justify-center">
               <button
                 type="submit"
-                className="flex justify-center rounded bg-primary p-3 font-medium text-gray ml-50"
+                className="flex justify-center rounded bg-primary p-3 font-medium text-gray ml-35"
               >
                 Register
               </button>

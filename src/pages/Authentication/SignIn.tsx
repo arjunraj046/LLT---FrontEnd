@@ -91,7 +91,7 @@ const SignIn = () => {
 
   return (
     <>
-      <div className="rounded-sm  bg-white shadow-default ">
+      <div >
         <div className="flex flex-wrap justify-evenly">
           <div className="w-full xl:w-1/2">
             <div className="w-full p-4 sm:p-12.5 xl:p-17.5">
