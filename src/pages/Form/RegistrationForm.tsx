@@ -93,7 +93,6 @@ const FormLayout = () => {
               <label className="mb-2.5 block text-black dark:text-white">
                 Name
               </label>
-
               <input
                 type="text"
                 placeholder="Enter your  name"

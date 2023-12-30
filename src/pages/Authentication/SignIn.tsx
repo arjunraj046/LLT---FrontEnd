@@ -52,7 +52,7 @@ const SignIn = () => {
     try {
       const response = await axios.post(
         'http://13.233.114.61:5000/api/auth/login',
-        credentials,
+        data,
       );
       const { token, user } = response.data;
       const userdata = {
@@ -91,7 +91,7 @@ const SignIn = () => {
 
   return (
     <>
-      <div >
+      <div>
         <div className="flex flex-wrap justify-evenly">
           <div className="w-full xl:w-1/2">
             <div className="w-full p-4 sm:p-12.5 xl:p-17.5">
