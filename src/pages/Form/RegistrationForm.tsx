@@ -64,7 +64,6 @@ const FormLayout = () => {
       console.log('User registered:', response.data);
       if (response.data.status == 'success') {
         showAlert('User created successfully!', 'success');
-
         navigate('/admin/userlist');
       }
     } catch (error: any) {

@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import * as Yup from 'yup';
 import { useForm } from 'react-hook-form';
-// import { yupResolver } from '@hookform/resolvers';
 import { yupResolver } from '@hookform/resolvers/yup';
 
 // import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -129,8 +128,6 @@ const TableTwo: React.FC = () => {
                 type="text"
                 placeholder="Type token to search..."
                 {...register('searchTerm')}
-                // value={searchQuery}
-                // onChange={handleInputChange}
                 className="w-full bg-transparent pr-4 pl-9 focus:outline-none"
               />
               <button

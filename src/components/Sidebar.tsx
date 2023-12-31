@@ -62,7 +62,6 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
         sidebarOpen ? 'translate-x-0' : '-translate-x-full'
       }`}
     >
-      {/* <!-- SIDEBAR HEADER --> */}
       <div className="flex items-center justify-between gap-2 px-6 py-5.5 lg:py-6.5">
         <NavLink to="/">
           <img src={Logo} alt="Logo" />
@@ -90,25 +89,21 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
           </svg>
         </button>
       </div>
-      {/* <!-- SIDEBAR HEADER --> */}
-
       <div className="no-scrollbar flex flex-col overflow-y-auto duration-300 ease-linear">
-        {/* <!-- Sidebar Menu --> */}
         <nav className="mt-5 py-4 px-4 lg:mt-9 lg:px-6">
-          {/* <!-- Menu Group --> */}
           <div>
             <h3 className="mb-4 ml-4 text-sm font-semibold text-bodydark2">
               MENU
             </h3>
 
             <ul className="mb-6 flex flex-col gap-1.5">
-              {/* <!-- Menu Item Dashboard --> */}
               <li>
                 <NavLink
                   to="/admin/"
                   className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
                     pathname == '/' ||
-                    (pathname.includes('dashboard') && 'bg-graydark dark:bg-meta-4')
+                    (pathname.includes('dashboard') &&
+                      'bg-graydark dark:bg-meta-4')
                   }`}
                 >
                   <svg
@@ -139,9 +134,6 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                   Dashboard
                 </NavLink>
               </li>
-              {/* <!-- Menu Item Dashboard --> */}
-
-              {/* <!-- Menu Item Users --> */}
               <li>
                 <NavLink
                   to="/admin/userlist"
@@ -170,8 +162,6 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                   Users
                 </NavLink>
               </li>
-              {/* <!-- Menu Item Users --> */}
-              {/* <!-- Menu Item Entity --> */}
               <li>
                 <NavLink
                   to="/admin/entity"
@@ -196,12 +186,9 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                       fill=""
                     />
                   </svg>
-                  Entity
+                  Entries
                 </NavLink>
               </li>
-              {/* <!-- Menu Item Entity --> */}
-
-              {/* <!-- Menu Item Settings --> */}
               <li>
                 <NavLink
                   to="/admin/settings"
@@ -242,13 +229,9 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                   Settings
                 </NavLink>
               </li>
-              {/* <!-- Menu Item Settings --> */}
             </ul>
           </div>
-
-          {/* <!-- Others Group --> */}
         </nav>
-        {/* <!-- Sidebar Menu --> */}
       </div>
     </aside>
   );

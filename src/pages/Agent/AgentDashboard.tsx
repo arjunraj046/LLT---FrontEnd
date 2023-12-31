@@ -4,12 +4,14 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faPenToSquare,
   faTicket,
+  faTrash,
   faUserPlus,
 } from '@fortawesome/free-solid-svg-icons';
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
 import { useSelector } from 'react-redux';
 import { user } from '../../redux/reducer/userSlice';
 import { Link } from 'react-router-dom';
+import { showAlert } from '../../components/tosterComponents/tost';
 
 // interface Person {
 //   _id: string;
@@ -29,6 +31,7 @@ const DashboardAgent: React.FC = () => {
 
   // const [people, setPeople] = useState<Person[]>([]);
   const [list, setList] = useState<any[]>([]);
+  const [reFetch, setReFetch] = useState<boolean>(false);
 
   useEffect(() => {
     const fetchUserDetails = async () => {
@@ -39,15 +42,14 @@ const DashboardAgent: React.FC = () => {
           { UserData, _id },
         );
         console.log('Response from POST request:', response.data);
-      setList(response?.data?.listEntity);
-
+        setList(response?.data?.listEntity);
       } catch (error) {
         console.error('Error making POST request:', error);
       }
     };
 
     fetchUserDetails();
-  }, []);
+  }, [reFetch]);
 
   // console.log(people);
   const formatDate = (dateString: string) => {
@@ -59,6 +61,31 @@ const DashboardAgent: React.FC = () => {
     return new Date(dateString).toLocaleDateString(undefined, options);
   };
 
+  const deleteEntry = async (id: any) => {
+    if (
+      confirm('Are you sure you want to save this thing into the database?')
+    ) {
+      try {
+        console.log(id);
+
+        const response = await axios.post(
+          'http://localhost:5000/api/agent/delete-entity',
+          { id },
+        );
+        console.log('API call successful!', response.data);
+        if (response.data.status == 'success') {
+          setReFetch(!reFetch);
+          showAlert('User Entry Delete successfully!', 'success');
+        }
+      } catch (error) {
+        console.error('Error making API call:', error);
+      }
+      console.log('Thing was saved to the database.');
+    } else {
+      // Do nothing!
+      console.log('Thing was not saved to the database.');
+    }
+  };
   return (
     <div className="rounded-sm border border-stroke bg-white px-5 pt-6 pb-2.5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:pb-1">
       <div className=" flex justify-end mb-7">
@@ -74,7 +101,7 @@ const DashboardAgent: React.FC = () => {
           <h5 className="text-sm font-medium uppercase xsm:text-base text-center">
             Token Number
           </h5>
-          <h5 className="hidden text-sm font-medium uppercase xsm:text-base text-center sm:block">
+          <h5 className="text-sm font-medium uppercase xsm:text-base text-center">
             Count
           </h5>
 
@@ -82,31 +109,38 @@ const DashboardAgent: React.FC = () => {
             Date
           </h5>
 
-          {/* <h5 className="hidden text-sm font-medium uppercase xsm:text-base text-center sm:block">
-            Edit
-          </h5> */}
+          <h5 className="text-sm font-medium uppercase xsm:text-base text-center">
+            Delete
+          </h5>
         </div>
-{/* person need to change to list items  */}
+        {/* person need to change to list items  */}
         {list.map((person) => (
           <div
             key={person._id}
             className="grid grid-cols-3 border-b border-stroke dark:border-strokedark sm:grid-cols-4 p-2.5"
           >
             <div className="flex items-center justify-center">
-              <p className="text-meta-3">{person.tokenNumber}</p>
+              <p className="text-black dark:text-white">{person.tokenNumber}</p>
             </div>
-            <div className="hidden items-center justify-center sm:flex">
+            <div className="flex items-center justify-center">
               <p className="text-black dark:text-white">{person.count}</p>
             </div>
 
             <div className="hidden items-center justify-center sm:flex">
-              <p className="text-meta-5">{formatDate(person.date)}</p>
-            </div>
-            {/* <div className="hidden items-center justify-center sm:flex">
-              <p className="text-meta-5">
-                <FontAwesomeIcon icon={faPenToSquare as IconProp} />
+              <p className="text-black dark:text-white">
+                {formatDate(person.date)}
               </p>
-            </div> */}
+            </div>
+            <div className="flex items-center justify-center">
+              <p className="text-meta-5">
+                <button
+                  onClick={() => deleteEntry(person._id)}
+                  className="inline-flex items-center justify-center rounded-full bg-meta-5 py-4 px-10 text-center font-semibold text-white hover:bg-opacity-90 lg:px-5 xl:px-5"
+                >
+                  <FontAwesomeIcon icon={faTrash} />
+                </button>
+              </p>
+            </div>
           </div>
         ))}
       </div>
