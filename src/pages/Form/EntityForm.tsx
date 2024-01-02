@@ -30,7 +30,7 @@ const EntityForm = () => {
 
     try {
       const response = await axios.post(
-        'http://13.233.114.61:5000/api/agent/add-entity',
+        'https://13.233.114.61:5000/api/agent/add-entity',
         {
           _id: _id,
           date: date,

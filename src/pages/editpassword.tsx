@@ -57,7 +57,7 @@ const EditAgentPassword = () => {
 
     try {
       const response = await axios.post(
-        'http://13.233.114.61:5000/api/admin/change-agentpassword',
+        'https://13.233.114.61:5000/api/admin/change-agentpassword',
         user,
       );
       console.log('User registered:', response.data);

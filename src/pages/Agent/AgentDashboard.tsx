@@ -38,7 +38,7 @@ const DashboardAgent: React.FC = () => {
       try {
         const _id = localStorage.getItem('agentID');
         const response = await axios.post<any>(
-          'http://13.233.114.61:5000/api/agent/entity',
+          'https://13.233.114.61:5000/api/agent/entity',
           { UserData, _id },
         );
         console.log('Response from POST request:', response.data);
@@ -69,7 +69,7 @@ const DashboardAgent: React.FC = () => {
         console.log(id);
 
         const response = await axios.post(
-          'http://localhost:5000/api/agent/delete-entity',
+          'https://localhost:5000/api/agent/delete-entity',
           { id },
         );
         console.log('API call successful!', response.data);

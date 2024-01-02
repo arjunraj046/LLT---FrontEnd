@@ -60,7 +60,7 @@ const TableTwo: React.FC = () => {
       console.log('axios is calling', token);
 
       const response = await axios.get<any>(
-        'http://13.233.114.61:5000/api/admin/search-list-entity',
+        'https://13.233.114.61:5000/api/admin/search-list-entity',
         { params: tokenObj },
       );
       console.log(response);
@@ -77,7 +77,7 @@ const TableTwo: React.FC = () => {
         try {
           console.log('axios is calling');
           const response = await axios.get<any>(
-            'http://13.233.114.61:5000/api/admin/enitity-rang-list',
+            'https://13.233.114.61:5000/api/admin/enitity-rang-list',
           );
           console.log(response);
 
@@ -96,7 +96,7 @@ const TableTwo: React.FC = () => {
       fetchRangeList();
       try {
         const response = await axios.get<any>(
-          'http://13.233.114.61:5000/api/admin/list-entity',
+          'https://13.233.114.61:5000/api/admin/list-entity',
         );
 
         console.log(response);

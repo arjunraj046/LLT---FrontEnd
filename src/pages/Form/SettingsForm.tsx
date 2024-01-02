@@ -52,7 +52,7 @@ const FormLayout2 = () => {
 
     try {
       const response = await axios.post(
-        'http://13.233.114.61:5000/api/admin/enitity-rang',
+        'https://13.233.114.61:5000/api/admin/enitity-rang',
         userWithColor,
       );
       console.log('User registered:', response.data);
