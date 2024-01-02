@@ -63,7 +63,7 @@ const DashboardAgent: React.FC = () => {
 
   const deleteEntry = async (id: any) => {
     if (
-      confirm('Are you sure you want to save this thing into the database?')
+      confirm('Are you sure you want to delete this thing into the database?')
     ) {
       try {
         console.log(id);

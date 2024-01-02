@@ -3,6 +3,9 @@ import axios from 'axios';
 import * as Yup from 'yup';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { showAlert } from '../components/tosterComponents/tost';
+import {faPenToSquare,faTicket,faTrash,faUserPlus} from '@fortawesome/free-solid-svg-icons';
 
 // import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 // import {  faMagnifyingGlass,   faPenToSquare, } from '@fortawesome/free-solid-svg-icons';
@@ -32,6 +35,7 @@ const TableTwo: React.FC = () => {
   const [people, setPeople] = useState<Person[]>([]);
   const [rangeList, setRangeList] = useState<Range[]>([]);
   const [totalCount, setTotalCount] = useState<any>(0);
+  const [reFetch, setReFetch] = useState<boolean>(false);
 
   const {
     register,
@@ -117,6 +121,32 @@ const TableTwo: React.FC = () => {
   };
 
   console.log(totalCount);
+  const deleteEntry = async (id: any) => {
+    if (
+      confirm('Are you sure you want to delete this thing into the database?')
+    ) {
+      try {
+        console.log(id);
+
+        const response = await axios.post(
+          'http://localhost:5000/api/agent/delete-entity',
+          { id },
+        );
+        console.log('API call successful!', response.data);
+        if (response.data.status == 'success') {
+          setReFetch(!reFetch);
+          showAlert('User Entry Delete successfully!', 'success');
+          // window.location.reload();
+        }
+      } catch (error) {
+        console.error('Error making API call:', error);
+      }
+      console.log('Thing was saved to the database.');
+    } else {
+      // Do nothing!
+      console.log('Thing was not saved to the database.');
+    }
+  };
 
   return (
     <div className="rounded-sm border border-stroke bg-white px-5 pt-6 pb-2.5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:pb-1">
@@ -167,7 +197,7 @@ const TableTwo: React.FC = () => {
       </div>
 
       <div className="flex flex-col">
-        <div className="grid grid-cols-3 rounded-sm bg-gray-2 dark:bg-meta-4 sm:grid-cols-7 p-2.5">
+        <div className="grid grid-cols-3 rounded-sm bg-gray-2 dark:bg-meta-4 sm:grid-cols-8 p-2.5">
           <h5 className="hidden text-sm font-medium uppercase xsm:text-base text-center sm:block">
             Agent Name
           </h5>
@@ -189,6 +219,9 @@ const TableTwo: React.FC = () => {
           <h5 className="hidden text-sm font-medium uppercase xsm:text-base text-center sm:block">
             Phone
           </h5>
+          <h5 className="hidden text-sm font-medium uppercase xsm:text-base text-center sm:block">
+            Action
+          </h5>
         </div>
 
         {people.map((person) => (
@@ -202,7 +235,7 @@ const TableTwo: React.FC = () => {
                 return (
                   <div
                     key={person._id}
-                    className="grid grid-cols-3 border-b border-stroke dark:border-strokedark sm:grid-cols-7 p-2.5"
+                    className="grid grid-cols-3 border-b border-stroke dark:border-strokedark sm:grid-cols-8 p-2"
                     style={{ backgroundColor: range.color }}
                   >
                     <div className="hidden items-center justify-center sm:flex">
@@ -240,6 +273,16 @@ const TableTwo: React.FC = () => {
                         {person.contactNumber}
                       </p>
                     </div>
+                    <div className="flex items-center justify-center">
+              <p className="text-meta-5">
+                <button
+                  onClick={() => deleteEntry(person._id)}
+                  className="inline-flex items-center justify-center rounded-full bg-meta-5 py-4 px-10 text-center font-semibold text-white hover:bg-opacity-90 lg:px-5 xl:px-5"
+                >
+                  <FontAwesomeIcon icon={faTrash} />
+                </button>
+              </p>
+            </div>
                   </div>
                 );
               }
