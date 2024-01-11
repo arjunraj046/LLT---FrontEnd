@@ -1,15 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect,useRef } from 'react';
 import axios from 'axios';
 import * as Yup from 'yup';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faMagnifyingGlass, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { showAlert } from '../components/tosterComponents/tost';
-import {faPenToSquare,faTicket,faTrash,faUserPlus} from '@fortawesome/free-solid-svg-icons';
-
-// import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-// import {  faMagnifyingGlass,   faPenToSquare, } from '@fortawesome/free-solid-svg-icons';
-// import { IconProp } from '@fortawesome/fontawesome-svg-core';
+import { Formik, Form, Field, ErrorMessage } from 'formik';
 
 interface Person {
   _id: string;
@@ -31,305 +28,284 @@ interface Range {
   date: string;
 }
 
-const TableTwo: React.FC = () => {
+interface FormData {
+  searchTerm: string;
+  dateFilter: string;
+}
+
+const validationSchema = Yup.object().shape({
+  searchTerm: Yup.string().matches(
+    /^[0-9]+$/,
+    'Search term must contain only numbers',
+  ),
+  dateFilter: Yup.string(), // You can add validation for the dateFilter here if needed
+});
+
+const EntityList: React.FC = () => {
   const [people, setPeople] = useState<Person[]>([]);
   const [rangeList, setRangeList] = useState<Range[]>([]);
-  const [totalCount, setTotalCount] = useState<any>(0);
+  const [totalCount, setTotalCount] = useState<number>(0);
   const [reFetch, setReFetch] = useState<boolean>(false);
+  const [noRecordsFound, setNoRecordsFound] = useState<boolean>(false);
+  const [dateFilter, setDateFilter] = useState<string>(getInitialDate());
+  const [searchTerm, setSearchTerm] = useState<string>('');
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm({
-    resolver: yupResolver(
-      Yup.object().shape({
-        searchTerm: Yup.string().required('Search term is required'),
-      }),
-    ),
-  });
+  const isInitialRender = useRef(true);
 
-  const onSubmit = async (data: any) => {
+  function getInitialDate() {
+    const today = new Date();
+    return today.toISOString().split('T')[0];
+  }
+
+  const fetchData = async (params?: { dateFilter?: string; tokenNumber?: string }) => {
     try {
-      console.log('Search data', data?.searchTerm);
-      let token = data?.searchTerm;
-      const tokenObj = {
-        tokenNumber: token,
-      };
-
-      console.log('axios is calling', token);
-
-      const response = await axios.get<any>(
-        'https://13.233.114.61:5000/api/admin/search-list-entity',
-        { params: tokenObj },
+      const responsePeople = await axios.get(
+        'http://13.200.244.122/api/admin/search-list-entity',
+        {
+          params: params || {},
+        }
       );
-      console.log(response);
-      setPeople(response.data.list);
-      setTotalCount(response.data.totalCount);
+
+      const responseRange = await axios.get<any>(
+        'http://13.200.244.122/api/admin/enitity-rang-list',
+      );
+
+      if (
+        responsePeople.data.status === 'success'&& 
+        responseRange.data.status === 'success'
+      ) {
+        const peopleList = responsePeople.data.list || [];
+        const rangeListData = responseRange.data.rangeList || [];
+        const totalCountData = responsePeople.data.totalCount || 0;
+
+        if (isInitialRender.current) {
+          setPeople(peopleList);
+          setRangeList(rangeListData);
+          setTotalCount(totalCountData);
+          isInitialRender.current = false;
+        } else {
+          setPeople(peopleList);
+          setRangeList(rangeListData);
+          setTotalCount(totalCountData);
+        }
+      } else {
+        console.error(
+          'API request failed with status:',
+          responsePeople.data.status,
+          responseRange.data.status,
+        );
+        setNoRecordsFound(true);
+      }
     } catch (error) {
-      console.error('Error:', error);
+      console.error('Error fetching data:', error);
+      setNoRecordsFound(true);
     }
   };
 
   useEffect(() => {
-    const fetchUserDetailsandRange = async () => {
-      const fetchRangeList = async () => {
-        try {
-          console.log('axios is calling');
-          const response = await axios.get<any>(
-            'https://13.233.114.61:5000/api/admin/enitity-rang-list',
-          );
-          console.log(response);
-
-          if (response.data.status === 'success') {
-            setRangeList(response.data.rangeList);
-          } else {
-            console.error(
-              'API request failed with status:',
-              response.data.status,
-            );
-          }
-        } catch (error) {
-          console.error('Error fetching range list:', error);
-        }
-      };
-      fetchRangeList();
-      try {
-        const response = await axios.get<any>(
-          'https://13.233.114.61:5000/api/admin/list-entity',
-        );
-
-        console.log(response);
-
-        setPeople(response.data.list);
-        setTotalCount(response.data.totalCount);
-      } catch (error) {
-        console.error('Error fetching user details:', error);
-      }
-    };
-
-    fetchUserDetailsandRange();
+    const today = new Date();
+    const initialDateFilter = today.toISOString().split('T')[0];
+    fetchData({ dateFilter: initialDateFilter });
   }, []);
-  console.log(people);
-  const formatDate = (dateString: string) => {
-    const options: Intl.DateTimeFormatOptions = {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
-    };
-    return new Date(dateString).toLocaleDateString(undefined, options);
-  };
 
-  console.log(totalCount);
+  useEffect(() => {
+    if (!isInitialRender.current) {
+      fetchData({ dateFilter, tokenNumber: searchTerm });
+    }
+  }, [dateFilter, searchTerm, reFetch]);
+
   const deleteEntry = async (id: any) => {
-    if (
-      confirm('Are you sure you want to delete this thing into the database?')
-    ) {
+    if (window.confirm('Are you sure you want to delete ?')) {
       try {
-        console.log(id);
-
         const response = await axios.post(
-          'http://localhost:5000/api/agent/delete-entity',
+          'http://13.200.244.122/api/admin/delete-entity-admin',
           { id },
         );
-        console.log('API call successful!', response.data);
-        if (response.data.status == 'success') {
-          setReFetch(!reFetch);
-          showAlert('User Entry Delete successfully!', 'success');
-          // window.location.reload();
+
+        if (response.data.status === 'success') {
+          setReFetch((prev) => !prev);
+          showAlert('User Entry Deleted successfully!', 'success');
         }
       } catch (error) {
         console.error('Error making API call:', error);
       }
-      console.log('Thing was saved to the database.');
-    } else {
-      // Do nothing!
-      console.log('Thing was not saved to the database.');
     }
   };
 
   return (
-    <div className="rounded-sm border border-stroke bg-white px-5 pt-6 pb-2.5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:pb-1">
-      <div className="mb-4">
-        <div className="  ">
-          <form onSubmit={handleSubmit(onSubmit)}>
-            <div className="relative">
-              <input
-                type="text"
-                placeholder="Type token to search..."
-                {...register('searchTerm')}
-                className="w-full bg-transparent pr-4 pl-9 focus:outline-none"
-              />
-              <button
-                type="submit"
-                className="absolute  top-1/2 left-0 -translate-y-1/2"
-              >
-                <svg
-                  className="fill-body hover:fill-primary dark:fill-bodydark dark:hover:fill-primary"
-                  width="20"
-                  height="20"
-                  viewBox="0 0 20 20"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    fillRule="evenodd"
-                    clipRule="evenodd"
-                    d="M9.16666 3.33332C5.945 3.33332 3.33332 5.945 3.33332 9.16666C3.33332 12.3883 5.945 15 9.16666 15C12.3883 15 15 12.3883 15 9.16666C15 5.945 12.3883 3.33332 9.16666 3.33332ZM1.66666 9.16666C1.66666 5.02452 5.02452 1.66666 9.16666 1.66666C13.3088 1.66666 16.6667 5.02452 16.6667 9.16666C16.6667 13.3088 13.3088 16.6667 9.16666 16.6667C5.02452 16.6667 1.66666 13.3088 1.66666 9.16666Z"
-                    fill=""
-                  />
-                  <path
-                    fillRule="evenodd"
-                    clipRule="evenodd"
-                    d="M13.2857 13.2857C13.6112 12.9603 14.1388 12.9603 14.4642 13.2857L18.0892 16.9107C18.4147 17.2362 18.4147 17.7638 18.0892 18.0892C17.7638 18.4147 17.2362 18.4147 16.9107 18.0892L13.2857 14.4642C12.9603 14.1388 12.9603 13.6112 13.2857 13.2857Z"
-                    fill=""
-                  />
-                </svg>
-              </button>
+    <div className="container mx-auto mt-8">
+      <div className="rounded-sm border border-stroke bg-white px-5 pt-6 pb-2.5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:pb-1">
+        <div className="mb-5">
+          {/* Date Filter */}
+          <input
+            type="date"
+            value={dateFilter}
+            onChange={(e) => setDateFilter(e.target.value)}
+            placeholder="Select date"
+          />
+        </div>
+        <div className="mb-5">
+          {/* Token Number Filter */}
+          <input
+            type="text"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            placeholder="Enter token number"
+          />
+        </div>
+        <div className="flex flex-col">
+          <div className="grid grid-cols-5 rounded-sm bg-gray-2 dark:bg-meta-4 sm:grid-cols-8 p-2.5">
+            <h5 className="hidden text-sm font-medium uppercase xsm:text-base text-center sm:block">
+              Sl No
+            </h5>
+            <h5 className="text-sm font-medium uppercase xsm:text-base text-center sm:block">
+              Agent Name
+            </h5>
+            <h5 className="text-sm font-medium uppercase xsm:text-base text-center">
+              UserName
+            </h5>
+            <h5 className="text-sm font-medium uppercase xsm:text-base text-center">
+              Token Number
+            </h5>
+            <h5 className="text-sm font-medium uppercase xsm:text-base text-center">
+              Count
+            </h5>
+            <h5 className="hidden text-sm font-medium uppercase xsm:text-base text-center sm:block">
+              Date
+            </h5>
+            <h5 className="hidden text-sm font-medium uppercase xsm:text-base text-center sm:block">
+              Phone
+            </h5>
+            <h5 className=" text-sm font-medium uppercase xsm:text-base text-center sm:block">
+              Action
+            </h5>
+          </div>
+          {people.length === 0 && noRecordsFound ? (
+            <div className="text-center text-gray-500 dark:text-gray-400 mt-4">
+              No records found.
             </div>
-            {errors.searchTerm && (
-              <div className="text-red-500 mt-2">
-                {errors.searchTerm.message}
-              </div>
-            )}
-          </form>
-        </div>
-      </div>
+          ) : (
+            people.map((person, index) => {
+              const matchingRange = rangeList.find(
+                (range) =>
+                  parseInt(person.tokenNumber) >= range.startRange &&
+                  parseInt(person.tokenNumber) <= range.endRange,
+              );
 
-      <div className="flex flex-col">
-        <div className="grid grid-cols-3 rounded-sm bg-gray-2 dark:bg-meta-4 sm:grid-cols-8 p-2.5">
-          <h5 className="hidden text-sm font-medium uppercase xsm:text-base text-center sm:block">
-            Agent Name
-          </h5>
-          <h5 className="text-sm font-medium uppercase xsm:text-base text-center">
-            UserName
-          </h5>
-          <h5 className="text-sm font-medium uppercase xsm:text-base text-center">
-            Token Number
-          </h5>
-          <h5 className="text-sm font-medium uppercase xsm:text-base text-center">
-            Count
-          </h5>
-          <h5 className="hidden text-sm font-medium uppercase xsm:text-base text-center sm:block">
-            Email
-          </h5>
-          <h5 className="hidden text-sm font-medium uppercase xsm:text-base text-center sm:block">
-            Date
-          </h5>
-          <h5 className="hidden text-sm font-medium uppercase xsm:text-base text-center sm:block">
-            Phone
-          </h5>
-          <h5 className="hidden text-sm font-medium uppercase xsm:text-base text-center sm:block">
-            Action
-          </h5>
-        </div>
-
-        {people.map((person) => (
-          <div>
-            {rangeList.map((range) => {
-              const numberToCheck = parseInt(person.tokenNumber);
-              const isInRange =
-                numberToCheck >= range.startRange &&
-                numberToCheck <= range.endRange;
-              if (isInRange) {
+              if (matchingRange) {
                 return (
                   <div
                     key={person._id}
-                    className="grid grid-cols-3 border-b border-stroke dark:border-strokedark sm:grid-cols-8 p-2"
-                    style={{ backgroundColor: range.color }}
+                    className={`grid grid-cols-5 border-b border-stroke dark:border-strokedark sm:grid-cols-8 p-2.5`}
+                    style={{ backgroundColor: matchingRange.color }}
                   >
                     <div className="hidden items-center justify-center sm:flex">
-                      <p className="text-black dark:text-white">
+                      <p className="text-white">{index + 1}</p>
+                    </div>
+                    <div className=" items-center justify-center sm:flex">
+                      <p className="text-white dark:text-white">
                         {person.name}
                       </p>
                     </div>
                     <div className="flex items-center justify-center">
-                      <p className="text-black dark:text-white">
+                      <p className="text-white dark:text-white">
                         {person.userName}
                       </p>
                     </div>
                     <div className="flex items-center justify-center">
-                      <p className="text-black dark:text-white">
+                      <p className="text-white dark:text-white">
                         {person.tokenNumber}
                       </p>
                     </div>
                     <div className="flex items-center justify-center">
-                      <p className="text-black dark:text-white">
+                      <p className="text-white dark:text-white">
                         {person.count}
                       </p>
                     </div>
                     <div className="hidden items-center justify-center sm:flex">
-                      <p className="text-black dark:text-white">
-                        {person.email}
+                      <p className="text-white dark:text-white">
+                        {person.date}
                       </p>
                     </div>
                     <div className="hidden items-center justify-center sm:flex">
-                      <p className="text-black dark:text-white">
-                        {formatDate(person.date)}
-                      </p>
-                    </div>
-                    <div className="hidden items-center justify-center sm:flex">
-                      <p className="text-black dark:text-white">
+                      <p className="text-white dark:text-white">
                         {person.contactNumber}
                       </p>
                     </div>
                     <div className="flex items-center justify-center">
-              <p className="text-meta-5">
-                <button
-                  onClick={() => deleteEntry(person._id)}
-                  className="inline-flex items-center justify-center rounded-full bg-meta-5 py-4 px-10 text-center font-semibold text-white hover:bg-opacity-90 lg:px-5 xl:px-5"
-                >
-                  <FontAwesomeIcon icon={faTrash} />
-                </button>
-              </p>
-            </div>
+                      <p className="text-white">
+                        <button
+                          onClick={() => deleteEntry(person._id)}
+                          >
+                          <FontAwesomeIcon icon={faTrash} />
+                        </button>
+                      </p>
+                    </div>
                   </div>
                 );
               }
-              // return null
-            })}
-          </div>
-        ))}
-        <h2>Total Count : {totalCount}</h2>
+              else{
+                return (
+                  <div
+                    key={person._id}
+                    className={`grid grid-cols-5 border-b border-stroke dark:border-strokedark sm:grid-cols-8 p-2.5`}
+                    style={{ backgroundColor: 'white' }}
+                  >
+                    <div className="hidden items-center justify-center sm:flex">
+                      <p className="text-graydark">{index + 1}</p>
+                    </div>
+                    <div className=" items-center justify-center sm:flex">
+                      <p className="text-graydark dark:text-white">
+                        {person.name}
+                      </p>
+                    </div>
+                    <div className="flex items-center justify-center">
+                      <p className="text-graydark dark:text-white">
+                        {person.userName}
+                      </p>
+                    </div>
+                    <div className="flex items-center justify-center">
+                      <p className="text-graydark dark:text-white">
+                        {person.tokenNumber}
+                      </p>
+                    </div>
+                    <div className="flex items-center justify-center">
+                      <p className="text-graydark dark:text-white">
+                        {person.count}
+                      </p>
+                    </div>
+                    <div className="hidden items-center justify-center sm:flex">
+                      <p className="text-graydark dark:text-white">
+                        {person.date}
+                      </p>
+                    </div>
+                    <div className="hidden items-center justify-center sm:flex">
+                      <p className="text-graydark dark:text-white">
+                        {person.contactNumber}
+                      </p>
+                    </div>
+                    <div className="flex items-center justify-center">
+                      <p className="text-graydark">
+                        <button
+                          onClick={() => deleteEntry(person._id)}
+                          >
+                          <FontAwesomeIcon icon={faTrash} />
+                        </button>
+                      </p>
+                    </div>
+                  </div>
+                );
+
+              }
+
+              
+            })
+          )}
+          <h2>Total Count: {totalCount}</h2>
+        </div>
       </div>
     </div>
   );
 };
 
-export default TableTwo;
-
-// (
-//   <div
-//   key={person._id}
-//   className="grid grid-cols-3 border-b border-stroke dark:border-strokedark sm:grid-cols-7 p-2.5"
-//   // style={{ backgroundColor: range
-// >
-//   <div className="flex items-center gap-3">
-//     <p className="text-black dark:text-white">
-//       {person.name}
-//     </p>
-//   </div>
-//   <div className="flex items-center justify-center">
-//     <p className="text-black dark:text-white">
-//       {person.userName}
-//     </p>
-//   </div>
-//   <div className="flex items-center justify-center">
-//     <p className="text-black dark:text-white">{person.tokenNumber}</p>
-//   </div>
-//   <div className="hidden items-center justify-center sm:flex">
-//     <p className="text-black dark:text-white">
-//       {person.count}
-//     </p>
-//   </div>
-//   <div className="hidden items-center justify-center sm:flex">
-//     <p className="text-black dark:text-white">{person.email}</p>
-//   </div>
-//   <div className="hidden items-center justify-center sm:flex">
-//     <p className="text-black dark:text-white">{formatDate(person.date)}</p>
-//   </div>
-//   <div className="hidden items-center justify-center sm:flex">
-//     <p className="text-black dark:text-white">{person.contactNumber}</p>
-//   </div>
-// </div>
-// )
+export default EntityList;

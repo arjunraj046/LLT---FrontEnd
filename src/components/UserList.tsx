@@ -5,8 +5,10 @@ import {
   faUnlockKeyhole,
   faUser,
   faUserPlus,
+  faEdit,faMagnifyingGlass, faTrash
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { showAlert } from '../components/tosterComponents/tost';
 interface Person {
   _id: string;
   profileImage: string;
@@ -24,7 +26,7 @@ const UserList: React.FC = () => {
     const fetchUserDetails = async () => {
       try {
         const response = await axios.get<any>(
-          'https://13.233.114.61:5000/api/admin/agent-list/',
+          'http://13.200.244.122/api/admin/agent-list/',
         );
         setPeople(response.data?.agentList);
       } catch (error) {
@@ -34,6 +36,25 @@ const UserList: React.FC = () => {
 
     fetchUserDetails();
   }, []);
+  
+  const deleteEntry = async (id: string) => {
+    if (window.confirm('Are you sure you want to delete?')) {
+      try {
+        const response = await axios.post(
+          'http://13.200.244.122/api/admin/delete-user',
+          { id },
+        );
+
+        if (response.data.status === 'success') {
+          setPeople((prevList) => prevList.filter((entry) => entry._id !== id));
+          showAlert('User Entry Deleted successfully!', 'success');
+        }
+      } catch (error) {
+        console.error('Error making API call:', error);
+      }
+    }
+  };
+  
 
   return (
     <div className="rounded-sm border border-stroke bg-white px-5 pt-6 pb-2.5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:pb-1">
@@ -45,8 +66,13 @@ const UserList: React.FC = () => {
         </button>
       </div>
       <div className="flex flex-col">
-        <div className="grid grid-cols-2 rounded-sm bg-gray-2 dark:bg-meta-4 sm:grid-cols-7">
-          <div className="hidden p-2.5 text-center sm:block xl:p-5">
+        <div className="grid grid-cols-5 rounded-sm bg-black dark:bg-meta-4 sm:grid-cols-9">
+        <div className=" p-2.5 text-center sm:block xl:p-5">
+            <h5 className="text-sm font-medium uppercase  xsm:text-base">
+              Sl No
+            </h5>
+          </div>
+          <div className=" p-2.5 text-center sm:block xl:p-5">
             <h5 className="text-sm font-medium uppercase  xsm:text-base">
               Name
             </h5>
@@ -71,7 +97,7 @@ const UserList: React.FC = () => {
               Status
             </h5>
           </div>
-          <div className="hidden p-2.5 text-center sm:block xl:p-5">
+          <div className=" p-2.5 text-center sm:block xl:p-5">
             <h5 className="text-sm font-medium uppercase xsm:text-base">
               Edit Profile
             </h5>
@@ -81,14 +107,22 @@ const UserList: React.FC = () => {
               Change Password
             </h5>
           </div>
+          <div className="hidden p-2.5 text-center sm:block xl:p-5">
+            <h5 className="text-sm font-medium uppercase xsm:text-base">
+              Delete
+            </h5>
+          </div>
         </div>
 
-        {people.map((person) => (
+        {people.map((person,index) => (
           <div
             key={person._id}
-            className="grid grid-cols-2 border-b border-stroke dark:border-strokedark sm:grid-cols-7"
+            className="grid grid-cols-5 border-b border-stroke dark:border-strokedark sm:grid-cols-9"
           >
-            <div className="hidden items-center justify-center p-2.5 sm:flex xl:p-5">
+             <div className="flex items-center justify p-2.5 xl:p-5">
+              <p className="text-black dark:text-white">{index+1}</p>
+            </div>
+            <div className=" w-auto items-center justify-center p-2.5 sm:flex xl:p-5">
               {/* <div className="flex-shrink-0">
                 <img
                   src={person.profileImage}
@@ -96,7 +130,7 @@ const UserList: React.FC = () => {
                   className="w-8 h-8 rounded-full"
                 />
               </div> */}
-              <p className="hidden text-black dark:text-white sm:block">
+              <p className=" text-black dark:text-white sm:block">
                 {person.name}
               </p>
             </div>
@@ -119,20 +153,29 @@ const UserList: React.FC = () => {
                 {person.status ? 'Active' : 'Inactive'}
               </p>
             </div>
-            <div className="hidden items-center justify-center p-2.5 sm:flex xl:p-5">
-              <button className="inline-flex items-center justify-center rounded-full bg-form-strokedark py-1.5 px-3 text-center font-semibold text-white hover:bg-opacity-90 l">
+            <div className="w-auto flex items-center justify-center p-2.5 sm:flex xl:p-5">
+              <button >
                 <Link to={`/admin/editprofile/${person._id}`}>
-                  <FontAwesomeIcon icon={faUser} /> Edit
+                  <FontAwesomeIcon icon={faEdit} /> 
                 </Link>
               </button>
             </div>
             <div className="hidden items-center justify-center p-2.5 sm:flex xl:p-5">
-              <button className="inline-flex items-center justify-center rounded-full bg-form-strokedark py-1.5 px-3 text-center font-semibold text-white hover:bg-opacity-90 l">
+              <button >
                 <Link to={`/admin/changepassword/${person._id}`}>
-                  <FontAwesomeIcon icon={faUnlockKeyhole} /> Edit
+                  <FontAwesomeIcon icon={faUnlockKeyhole} />
                 </Link>
               </button>
             </div>
+            <div className="flex items-center justify-center">
+                      <p className="text-grey">
+                      <button
+              onClick={() => deleteEntry(person._id)}
+               >
+                          <FontAwesomeIcon icon={faTrash} />
+                        </button>
+                      </p>
+                    </div>
 
             {/* <div className="hidden items-center justify-center p-2.5 sm:flex xl:p-5">
               <p className="text-meta-5">

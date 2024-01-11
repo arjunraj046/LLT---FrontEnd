@@ -1,6 +1,5 @@
-// import Breadcrumb from '../../components/Breadcrumb';
 import axios from 'axios';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { useSelector } from 'react-redux';
@@ -8,13 +7,43 @@ import { Link, useNavigate } from 'react-router-dom';
 import { user } from '../../redux/reducer/userSlice';
 import { showAlert } from '../../components/tosterComponents/tost';
 
-const EntityForm = () => {
-  const navigate = useNavigate();
+interface DrawTime {
+  _id: string;
+  drawTime: string;
+  // Add other properties if needed
+}
 
-  const UserData = useSelector(user);
+const EntityForm: React.FC = () => {
+  const [drawTimeList, setDrawTimeList] = useState<DrawTime[]>([]);
   const [tokenNumber, setTokenNumber] = useState('');
   const [count, setCount] = useState('');
   const [date, setDate] = useState<Date | null>(new Date());
+  const [drawTime, setDrawTime] = useState('');
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchDrawTimeList = async () => {
+      try {
+        const response = await axios.get<any>(
+          'http://13.200.244.122/api/admin/enitity-draw-time-rang-list',
+        );
+
+        if (response.data.status === 'success') {
+          setDrawTimeList(response.data.drawTimeList);
+        } else {
+          console.error('API request failed with status:', response.data.status);
+        }
+      } catch (error) {
+        console.error('Error fetching draw time list:', error);
+      }
+    };
+
+    fetchDrawTimeList();
+  }, []);
+
+  const handleDrawTimeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setDrawTime(e.target.value.toString()); // Parse to string
+  };
 
   const handleTokenNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setTokenNumber(e.target.value);
@@ -29,59 +58,30 @@ const EntityForm = () => {
     const _id = localStorage.getItem('agentID');
 
     try {
+      const formattedDate = date?.toISOString().split('T')[0];
       const response = await axios.post(
-        'https://13.233.114.61:5000/api/agent/add-entity',
+        'http://13.200.244.122/api/agent/add-entity',
         {
           _id: _id,
-          date: date,
+          date: formattedDate,
           tokenNumber,
           count,
+          drawTime,
         },
       );
 
-      console.log('User registered:', response.data);
-      // alert('User registered successfully!');
-      showAlert("Entry added successfully!", 'error');
+      console.log('Entry Added', response.data);
+      showAlert('Entry added successfully!', 'success');
 
       navigate('/');
     } catch (error: any) {
-      console.error('Error registering user:', error);
-      // alert('Something went wrong. Please try again.');
+      console.error('Error adding entry:', error);
       showAlert(error?.response?.data?.error, 'error');
     }
   };
 
-  // const [user, setUser] = useState({
-  //   tokenNumber: '',
-  //   count: ''
-  // });
-  // const [startDate, setStartDate] = useState<Date | null>(new Date());
-  // const handleChanged = (e: React.ChangeEvent<HTMLInputElement>) => {
-  //   const { name, value } = e.target;
-  //   setUser((prevUser) => ({
-  //     ...prevUser,
-  //     [name]: value,
-  //   }));
-  // };
-  // const handleRegistration = async (e: React.FormEvent) => {
-  //   e.preventDefault();
-  //   try {
-  //     const response = await axios.post('http://localhost:5000/api/agent/add-entity', {
-  //       ...user,
-  //       date: startDate || undefined, // Send undefined if startDate is null
-  //     });
-  //     console.log('User registered:', response.data);
-  //     alert('User registered successfully!');
-  //   } catch (error) {
-  //     console.error('Error registering user:', error);
-  //     alert('Something went wrong. Please try again.');
-  //   }
-  // };
-
   return (
     <>
-      {/* <Breadcrumb pageName="Add Token" /> */}
-
       <div className="grid grid-cols-1 gap-9 ">
         <div className="flex flex-col gap-9 ">
           <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
@@ -120,25 +120,45 @@ const EntityForm = () => {
                     className="rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary w-2/3"
                   />
                 </div>
+                <div>
+                  <label className="mb-3 block text-black dark:text-white">
+                    Draw Time
+                  </label>
+                  <select
+                    name="drawTime"
+                    value={drawTime}
+                    onChange={handleDrawTimeChange}
+                    className="rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary w-50"
+                  >
+                    <option value="" disabled>
+                      Select Draw Time
+                    </option>
+                    {drawTimeList.map((drawTime) => (
+                      <option key={drawTime._id} value={drawTime.drawTime}>
+                        {drawTime.drawTime}
+                      </option>
+                    ))}
+                  </select>
+                </div>
 
                 <div>
                   <label className="mb-3 block text-black dark:text-white">
                     Select date
                   </label>
-                  {/* <div className="rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary w-2/3"> */}
                   <DatePicker
                     selected={date}
                     onChange={(date) => setDate(date)}
-                    className="rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary w-2/3"
+                    className="rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary w-50"
                   />
-                  {/* </div> */}
                 </div>
+
+  
               </div>
 
               <div className="flex justify-center mb-10">
                 <button
                   type="submit"
-                  className="flex justify-center rounded bg-primary p-3 font-medium text-gray ml-50"
+                  className="flex justify-center rounded bg-primary p-3 font-medium text-gray ml-5"
                 >
                   Save
                 </button>

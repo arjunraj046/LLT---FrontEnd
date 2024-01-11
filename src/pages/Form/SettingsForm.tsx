@@ -8,11 +8,11 @@ import { useForm } from 'react-hook-form';
 import { showAlert } from '../../components/tosterComponents/tost';
 
 interface FormValues {
-  startRange: number;
-  endRange: number;
+  startRange: number | null;
+  endRange: number | null;
 }
 
-const FormLayout2 = () => {
+const SettingsForm = () => {
   const navigate = useNavigate();
   const [color, setColor] = useState('#ff0000');
 
@@ -44,6 +44,10 @@ const FormLayout2 = () => {
     trigger,
   } = useForm<FormValues>({
     resolver: yupResolver(schema),
+    defaultValues: {
+      startRange: null,
+      endRange: null,
+    },
   });
 
   const onSubmit = async (data: any) => {
@@ -52,7 +56,7 @@ const FormLayout2 = () => {
 
     try {
       const response = await axios.post(
-        'https://13.233.114.61:5000/api/admin/enitity-rang',
+        'http://13.200.244.122/api/admin/enitity-rang',
         userWithColor,
       );
       console.log('User registered:', response.data);
@@ -121,7 +125,7 @@ const FormLayout2 = () => {
                 Save
               </button>
               <Link
-                to="/settings"
+                to="/admin/settings"
                 className="flex justify-center rounded bg-primary p-3 font-medium text-gray ml-3"
               >
                 Cancel
@@ -134,4 +138,4 @@ const FormLayout2 = () => {
   );
 };
 
-export default FormLayout2;
+export default SettingsForm;

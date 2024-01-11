@@ -35,7 +35,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
     document.addEventListener('click', clickHandler);
     return () => document.removeEventListener('click', clickHandler);
   });
-
+console.log(sidebarOpen)
   // close if the esc key is pressed
   useEffect(() => {
     const keyHandler = ({ keyCode }: KeyboardEvent) => {
@@ -98,6 +98,9 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
 
             <ul className="mb-6 flex flex-col gap-1.5">
               <li>
+              <button onClick={()=>{
+                  setSidebarOpen(false)
+                }} className='w-full'>
                 <NavLink
                   to="/admin/"
                   className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
@@ -133,8 +136,12 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                   </svg>
                   Dashboard
                 </NavLink>
+                </button>
               </li>
               <li>
+                <button onClick={()=>{
+                  setSidebarOpen(false)
+                }} className='w-full'>
                 <NavLink
                   to="/admin/userlist"
                   className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
@@ -161,12 +168,18 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                   </svg>
                   Users
                 </NavLink>
+
+
+                </button>
               </li>
               <li>
+              <button onClick={()=>{
+                  setSidebarOpen(false)
+                }}  className='w-full'>
                 <NavLink
                   to="/admin/entity"
                   className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
-                    pathname.includes('entity') && 'bg-graydark dark:bg-meta-4'
+                    pathname.includes('entity') && 'bg-graydark dark:bg-meta-4 '
                   }`}
                 >
                   <svg
@@ -188,8 +201,12 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                   </svg>
                   Entries
                 </NavLink>
+                </button>
               </li>
               <li>
+              <button onClick={()=>{
+                  setSidebarOpen(false)
+                }} className='w-full'>
                 <NavLink
                   to="/admin/settings"
                   className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
@@ -228,6 +245,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                   </svg>
                   Settings
                 </NavLink>
+                </button>
               </li>
             </ul>
           </div>

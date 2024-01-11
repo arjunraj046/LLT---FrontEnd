@@ -41,6 +41,7 @@
     "react-redux": "^9.0.4",
     "react-router-dom": "^6.14.2",
     "react-tailwindcss-datepicker": "^1.6.6",
+    "react-time-picker": "^6.6.0",
     "react-toastify": "^9.1.3",
     "redux-persist": "^6.0.0",
     "sort-by": "^0.0.2",
