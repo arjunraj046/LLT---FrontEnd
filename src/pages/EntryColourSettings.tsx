@@ -42,7 +42,7 @@ const EntryColourSettings: React.FC = () => {
     if (window.confirm('Are you sure you want to delete?')) {
       try {
         const response = await axios.post(
-          '/api/admin/delete-colour-settings',
+          'http://localhost:5000/api/admin/delete-colour-settings',
           { id },
         );
 
@@ -76,7 +76,7 @@ const EntryColourSettings: React.FC = () => {
       </div>
       <div className="flex flex-col">
         <div className="grid grid-cols-4 rounded-sm bg-gray-2 dark:bg-meta-4  sm:grid-cols-4 p-2.5">
-          <div className="p-2.5 xl:p-5">
+          <div className="p-2.5  text-center xl:p-5">
             <h5 className="text-sm font-medium uppercase xsm:text-base">
               Start Range
             </h5>
@@ -86,16 +86,17 @@ const EntryColourSettings: React.FC = () => {
               End Range
             </h5>
           </div>
-          <div className="  p-2.5 sm:flex xl:p-5">
+          <div className="  p-2.5 text-center xl:p-5">
             <h5 className="text-sm font-medium uppercase xsm:text-base">
               Date
             </h5>
-            <div className="  p-2.5 sm:flex xl:p-5">
+            </div>
+            <div className="  p-2.5 text-center xl:p-5">
             <h5 className="text-sm font-medium uppercase xsm:text-base ">
               Action
             </h5>
             </div>
-          </div>
+          
         </div>
 
         {rangeList.map((range) => (
