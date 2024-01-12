@@ -23,7 +23,7 @@ const EntryDrawSettings: React.FC = () => {
         console.log('axios is calling');
 
         const response = await axios.get<any>(
-          'http://13.200.244.122/api/admin/enitity-draw-time-rang-list',
+          '/api/admin/enitity-draw-time-rang-list',
         );
         if (response.data.status === 'success') {
             setDrawTimeList(response.data.drawTimeList);
@@ -57,7 +57,7 @@ const EntryDrawSettings: React.FC = () => {
     if (window.confirm('Are you sure you want to delete?')) {
       try {
         const response = await axios.post(
-          'http://13.200.244.122/api/admin/delete-draw-time',
+          '/api/admin/delete-draw-time',
           { id },
         );
 

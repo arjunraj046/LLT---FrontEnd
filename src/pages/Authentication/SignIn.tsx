@@ -51,7 +51,7 @@ const SignIn = () => {
     setCredentials(data);
     try {
       const response = await axios.post(
-        'http://13.200.244.122/api/auth/login',
+        '/api/auth/login',
         data,
       );
       const { token, user } = response.data;

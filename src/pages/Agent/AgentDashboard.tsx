@@ -22,7 +22,7 @@ const DashboardAgent: React.FC = () => {
         console.log(_id)
         console.log(token)
         const response = await axios.post<any>(
-          'http://13.200.244.122/api/agent/entity',
+          '/api/agent/entity',
           { UserData, _id },
           {
             headers: {
@@ -55,7 +55,7 @@ const DashboardAgent: React.FC = () => {
         console.log(id);
 
         const response = await axios.post(
-          'http://13.200.244.122/api/agent/delete-entity-agent',
+          '/api/agent/delete-entity-agent',
           { id },
         );
         console.log('API call successful!', response.data);

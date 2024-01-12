@@ -60,14 +60,14 @@ const EntityList: React.FC = () => {
   const fetchData = async (params?: { dateFilter?: string; tokenNumber?: string }) => {
     try {
       const responsePeople = await axios.get(
-        'http://13.200.244.122/api/admin/search-list-entity',
+        '/api/admin/search-list-entity',
         {
           params: params || {},
         }
       );
 
       const responseRange = await axios.get<any>(
-        'http://13.200.244.122/api/admin/enitity-rang-list',
+        '/api/admin/enitity-rang-list',
       );
 
       if (
@@ -118,7 +118,7 @@ const EntityList: React.FC = () => {
     if (window.confirm('Are you sure you want to delete ?')) {
       try {
         const response = await axios.post(
-          'http://13.200.244.122/api/admin/delete-entity-admin',
+          '/api/admin/delete-entity-admin',
           { id },
         );
 

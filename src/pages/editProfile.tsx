@@ -54,7 +54,7 @@ const EditAgentProfile = () => {
     const fetchAgentData = async () => {
       try {
         const response = await axios.get(
-          `http://13.200.244.122/api/admin/agent/${id}`,
+          `/api/admin/agent/${id}`,
         );
         const { name, userName, email, contactNumber } =
           response.data.agentDetails;
@@ -87,7 +87,7 @@ const EditAgentProfile = () => {
     }
     try {
       const response = await axios.post(
-        'http://13.200.244.122/api/admin/edit-agent',
+        '/api/admin/edit-agent',
         data,
       );
       console.log('User updated:', response.data);
@@ -217,7 +217,7 @@ export default EditAgentProfile;
 //     const fetchAgentData = async () => {
 //       try {
 //         const response = await axios.get<any>(
-//           `http://13.200.244.122/api/admin/agent/${id}`,
+//           `/api/admin/agent/${id}`,
 //         );
 //         console.log('API Response:', response.data);
 //         setUser(response.data.agentDetails);
@@ -244,7 +244,7 @@ export default EditAgentProfile;
 //     try {
 //       // Replace the URL with your actual registration endpoint
 //       const response = await axios.post(
-//         'http://13.200.244.122/api/admin//edit-agent',
+//         '/api/admin//edit-agent',
 //         user,
 //       );
 //       console.log(user);

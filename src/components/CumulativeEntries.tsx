@@ -17,7 +17,7 @@ const CumulativeEntries: React.FC = () => {
   const fetchData = async (params?: Params) => {
     try {
       const response = await axios.get(
-        'http://13.200.244.122/api/admin/list-entity-cumulative',
+        '/api/admin/list-entity-cumulative',
         {
           params: params || {},
         }

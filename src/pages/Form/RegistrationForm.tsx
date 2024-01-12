@@ -58,7 +58,7 @@ const FormLayout = () => {
   const onSubmit = async (data: FormValues) => {
     try {
       const response = await axios.post(
-        'http://13.200.244.122/api/admin/agent-register',
+        '/api/admin/agent-register',
         data,
       );
       console.log('User registered:', response.data);

@@ -23,7 +23,7 @@ const DrawTimeSettingsForm: React.FC = () => {
 
     try {
       const response = await axios.post(
-        'http://13.200.244.122/api/admin/draw-time',
+        '/api/admin/draw-time',
         {
           time: time,
         },

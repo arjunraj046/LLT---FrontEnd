@@ -26,7 +26,7 @@ const UserList: React.FC = () => {
     const fetchUserDetails = async () => {
       try {
         const response = await axios.get<any>(
-          'http://13.200.244.122/api/admin/agent-list/',
+          '/api/admin/agent-list/',
         );
         setPeople(response.data?.agentList);
       } catch (error) {
@@ -41,7 +41,7 @@ const UserList: React.FC = () => {
     if (window.confirm('Are you sure you want to delete?')) {
       try {
         const response = await axios.post(
-          'http://13.200.244.122/api/admin/delete-user',
+          '/api/admin/delete-user',
           { id },
         );
 
