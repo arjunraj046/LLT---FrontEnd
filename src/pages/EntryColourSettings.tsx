@@ -91,7 +91,7 @@ const EntryColourSettings: React.FC = () => {
               Date
             </h5>
             <div className="  p-2.5 sm:flex xl:p-5">
-            <h5 className="text-sm font-medium uppercase xsm:text-base text-center">
+            <h5 className="text-sm font-medium uppercase xsm:text-base ">
               Action
             </h5>
             </div>
@@ -115,7 +115,7 @@ const EntryColourSettings: React.FC = () => {
                 {formatDate(range.date)}
               </p>
             </div>
-            <div className="flex items-center justify-center">
+            <div className="flex items-center justify-center p-2.5 xl:p-5">
                       <p className="text-white">
                       <button
               onClick={() => deleteEntry(range._id)}
