@@ -152,7 +152,7 @@ const CumulativeEntries: React.FC = () => {
             <div
               key={entry._id}
               className={`grid grid-cols-3 border-b border-stroke dark:border-strokedark sm:grid-cols-3 p-2.5`}
-                  style={{ backgroundColor: matchingRange?.color || 'white' }}
+                  style={{ backgroun.dColor: matchingRange?.color || 'white' }}
             >
               <div  className="flex items-center justify-center">
                 <p  className={matchingRange ? 'text-white' : 'text-graydark'}>{index + 1}</p>
@@ -166,7 +166,7 @@ const CumulativeEntries: React.FC = () => {
             </div>
             )
 })}
-)
+
         </div>
       </div>
     </div>
