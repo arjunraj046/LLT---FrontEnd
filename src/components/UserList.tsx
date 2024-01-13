@@ -66,27 +66,27 @@ const UserList: React.FC = () => {
         </button>
       </div>
       <div className="flex flex-col">
-        <div className="grid grid-cols-5 rounded-sm bg-black dark:bg-meta-4 sm:grid-cols-9">
+        <div className="grid grid-cols-5 rounded-sm bg-black dark:bg-meta-4 sm:grid-cols-8">
         <div className=" p-2.5 text-center sm:block xl:p-5">
-            <h5 className="text-sm font-medium uppercase  xsm:text-base">
+            <h5 className="text-sm font-medium uppercase  xsm:text-base ">
               Sl No
             </h5>
           </div>
-          <div className=" p-2.5 text-center sm:block xl:p-5">
+          <div className="  hidden p-2.5 text-center sm:block xl:p-5">
             <h5 className="text-sm font-medium uppercase  xsm:text-base">
               Name
             </h5>
           </div>
-          <div className="p-2.5 text-center xl:p-5">
+          <div className=" p-2.5 text-center sm:block xl:p-5">
             <h5 className="text-sm font-medium uppercase xsm:text-base">
-              UserName
+              User
             </h5>
           </div>
-          <div className="hidden p-2.5 text-center sm:block xl:p-5">
+          {/* <div className="hidden p-2.5 text-center sm:block xl:p-5">
             <h5 className="text-sm font-medium uppercase xsm:text-base">
               Email
             </h5>
-          </div>
+          </div> */}
           <div className="hidden p-2.5 text-center sm:block xl:p-5">
             <h5 className="text-sm font-medium uppercase xsm:text-base">
               Contact
@@ -97,7 +97,7 @@ const UserList: React.FC = () => {
               Status
             </h5>
           </div>
-          <div className=" p-2.5 text-center sm:block xl:p-5">
+          {/* <div className=" p-2.5 text-center sm:block xl:p-5">
             <h5 className="text-sm font-medium uppercase xsm:text-base">
               Edit Profile
             </h5>
@@ -107,22 +107,22 @@ const UserList: React.FC = () => {
               Change Password
             </h5>
           </div>
-          <div className="hidden p-2.5 text-center sm:block xl:p-5">
+          <div className="p-2.5 text-center sm:block xl:p-5">
             <h5 className="text-sm font-medium uppercase xsm:text-base">
               Delete
             </h5>
-          </div>
+          </div> */}
         </div>
 
         {people.map((person,index) => (
           <div
             key={person._id}
-            className="grid grid-cols-5 border-b border-stroke dark:border-strokedark sm:grid-cols-9"
+            className="grid grid-cols-5 border-b border-stroke dark:border-strokedark sm:grid-cols-8"
           >
-             <div className="flex items-center justify p-2.5 xl:p-5">
+             <div className="items-center justify p-2.5 xl:p-5">
               <p className="text-black dark:text-white">{index+1}</p>
             </div>
-            <div className=" w-auto items-center justify-center p-2.5 sm:flex xl:p-5">
+            <div className=" hidden w-auto items-center justify-center p-2.5 sm:flex xl:p-5">
               {/* <div className="flex-shrink-0">
                 <img
                   src={person.profileImage}
@@ -134,12 +134,12 @@ const UserList: React.FC = () => {
                 {person.name}
               </p>
             </div>
-            <div className="flex items-center justify p-2.5 xl:p-5">
+            <div className="flex items-center justify-center p-2.5 xl:p-5">
               <p className="text-black dark:text-white">{person.userName}</p>
             </div>
-            <div className="hidden items-center justify-center p-2.5 sm:flex xl:p-5">
+            {/* <div className="hidden items-center justify-center p-2.5 sm:flex xl:p-5">
               <p className="m-2">{person.email}</p>
-            </div>
+            </div> */}
             <div className="hidden items-center justify-center p-2.5 sm:flex xl:p-5">
               <p className="text-black dark:text-white">
                 {person.contactNumber}
@@ -153,7 +153,7 @@ const UserList: React.FC = () => {
                 {person.status ? 'Active' : 'Inactive'}
               </p>
             </div>
-            <div className="w-auto flex items-center justify-center p-2.5 sm:flex xl:p-5">
+            <div className=" flex items-center justify-center p-2.5 sm:flex xl:p-5">
               <button >
                 <Link to={`/admin/editprofile/${person._id}`}>
                   <FontAwesomeIcon icon={faEdit} /> 
@@ -167,7 +167,7 @@ const UserList: React.FC = () => {
                 </Link>
               </button>
             </div>
-            <div className="flex items-center justify-center">
+            <div className="flex items-center justify-center  p-2.5 sm:flex xl:p-5">
                       <p className="text-grey">
                       <button
               onClick={() => deleteEntry(person._id)}

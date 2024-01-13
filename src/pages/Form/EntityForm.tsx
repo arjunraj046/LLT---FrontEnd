@@ -98,7 +98,7 @@ const EntityForm: React.FC = () => {
                     Token Number
                   </label>
                   <input
-                    type="text"
+                    type="number"
                     name="tokenNumber"
                     value={tokenNumber}
                     placeholder="Token Number"
@@ -112,7 +112,7 @@ const EntityForm: React.FC = () => {
                     Token Count
                   </label>
                   <input
-                    type="text"
+                    type="number"
                     name="count"
                     placeholder="Token Count"
                     value={count}
