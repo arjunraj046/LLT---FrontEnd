@@ -64,7 +64,7 @@ const EntityList: React.FC = () => {
   }) => {
     try {
       const responsePeople = await axios.get(
-        'http://localhost:5000/api/admin/search-list-entity',
+        '/api/admin/search-list-entity',
         {
           params: params || {},
         },
@@ -130,13 +130,13 @@ const EntityList: React.FC = () => {
     if (window.confirm('Are you sure you want to delete?')) {
       try {
         const response = await axios.post(
-          'http://localhost:5000/api/admin/delete-entity-admin',
+          '/api/admin/delete-entity-admin',
           { id },
         );
 
         if (response.data.status === 'success') {
           setReFetch((prev) => !prev);
-                    showAlert('User Entry Deleted successfully!', 'success');
+          showAlert('User Entry Deleted successfully!', 'success');
         }
       } catch (error) {
         console.error('Error making API call:', error);
@@ -183,6 +183,7 @@ const EntityList: React.FC = () => {
                   {drawTime.drawTime}
                 </option>
               ))}
+              <option value="">None</option>
             </select>
           </div>
         </div>
