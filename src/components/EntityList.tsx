@@ -139,7 +139,7 @@ const EntityList: React.FC = () => {
     if (window.confirm('Are you sure you want to delete?')) {
       try {
         const response = await axios.post(
-          'http://localhost:5000/api/admin/delete-entity-admin',
+          '/api/admin/delete-entity-admin',
           { id },
         );
 
