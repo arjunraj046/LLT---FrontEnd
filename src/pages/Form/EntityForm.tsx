@@ -2,20 +2,19 @@ import axios from 'axios';
 import React, { useState, useEffect } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-import { useSelector } from 'react-redux';
+// import { useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
-import { user } from '../../redux/reducer/userSlice';
+// import { user } from '../../redux/reducer/userSlice';
 import { showAlert } from '../../components/tosterComponents/tost';
 
 interface DrawTime {
   _id: string;
   drawTime: string;
-  // Add other properties if needed
 }
 
 const EntityForm: React.FC = () => {
   const [drawTimeList, setDrawTimeList] = useState<DrawTime[]>([]);
-  const [tokenNumber, setTokenNumber] = useState('');
+  const [tokenNumber, setTokenNumber] = useState<string>('');
   const [count, setCount] = useState('');
   const [date, setDate] = useState<Date | null>(new Date());
   const [drawTime, setDrawTime] = useState('');
@@ -98,9 +97,9 @@ const EntityForm: React.FC = () => {
                     Token Number
                   </label>
                   <input
-                    type="number"
+                    type="text"
                     name="tokenNumber"
-                    value={tokenNumber}
+                    value={tokenNumber} 
                     placeholder="Token Number"
                     onChange={handleTokenNumberChange}
                     className="rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary w-2/3"

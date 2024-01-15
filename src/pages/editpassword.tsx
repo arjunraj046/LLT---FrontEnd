@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import axios from 'axios';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import * as yup from 'yup';
@@ -11,7 +11,7 @@ const EditAgentPassword = () => {
   const { id } = useParams();
   const [user, setUser] = useState({
     _id: id,
-    previousPassword: '',
+    // previousPassword: '',
     password: '',
     confirmPassword: '',
   });
@@ -25,7 +25,7 @@ const EditAgentPassword = () => {
       .string()
       .notOneOf(
         [yup.ref('previousPassword')],
-        'New password must be different from the previous password',
+        'New password must be different from the previous password'
       )
       .required('Password is required')
       .min(4, 'Password should be at least 4 characters'),
@@ -49,23 +49,24 @@ const EditAgentPassword = () => {
     console.log(data);
     setUser({
       ...user,
-      previousPassword: data.previousPassword,
+      // previousPassword: data.previousPassword,
       password: data.password,
       confirmPassword: data.confirmPassword,
     });
+  
     console.log(user);
-
+  
     try {
       const response = await axios.post(
         '/api/admin/change-agentpassword',
-        user,
+        user
       );
       console.log('User registered:', response.data);
       // alert('Password changed successfully!');
       showAlert('Password changed successfully!', 'success');
 
       navigate('/admin/userlist');
-    } catch (error: any) {
+    } catch (error:any) {
       console.error('Error registering user:', error);
       // alert('Something went wrong. Please try again.');
       showAlert(error?.response?.data?.error, 'error');
@@ -82,7 +83,8 @@ const EditAgentPassword = () => {
             </h3>
           </div>
           <form onSubmit={handleSubmit(onSubmit)} className="p-6.5">
-            <div className="mb-4.5">
+          
+            {/* <div className="mb-4.5">
               <label className="mb-2.5 block text-black dark:text-white">
                 Previous Password
               </label>
@@ -95,7 +97,8 @@ const EditAgentPassword = () => {
               {errors.previousPassword && (
                 <p className="text-red">{errors.previousPassword.message}</p>
               )}
-            </div>
+            </div> */}
+
             <div className="mb-4.5">
               <label className="mb-2.5 block text-black dark:text-white">
                 Password

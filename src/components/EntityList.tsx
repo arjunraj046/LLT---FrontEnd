@@ -126,11 +126,20 @@ const EntityList: React.FC = () => {
     }
   }, [dateFilter, searchTerm, drawTime, reFetch]);
 
+  const formatDate = (dateString: string) => {
+    const options: Intl.DateTimeFormatOptions = {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+    };
+    return new Date(dateString).toLocaleDateString(undefined, options);
+  };
+
   const deleteEntry = async (id: string) => {
     if (window.confirm('Are you sure you want to delete?')) {
       try {
         const response = await axios.post(
-          '/api/admin/delete-entity-admin',
+          'http://localhost:5000/api/admin/delete-entity-admin',
           { id },
         );
 
@@ -223,8 +232,8 @@ const EntityList: React.FC = () => {
             people.map((person, index) => {
               const matchingRange = rangeList.find(
                 (range) =>
-                  parseInt(person.tokenNumber) >= range.startRange &&
-                  parseInt(person.tokenNumber) <= range.endRange,
+                  parseInt(person.count) >= range.startRange &&
+                  parseInt(person.count) <= range.endRange,
               );
 
               return (
@@ -292,7 +301,7 @@ const EntityList: React.FC = () => {
                           : 'text-graydark dark:text-white'
                       }
                     >
-                      {person.date}
+                      {formatDate(person.date)}
                     </p>
                   </div>
                   <div className="hidden items-center justify-center sm:flex">

@@ -90,22 +90,24 @@ const CumulativeEntries: React.FC = () => {
     <div className="container mx-auto mt-8">
       <div className="rounded-sm border border-stroke bg-white px-5 pt-6 pb-2.5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:pb-1">
         <div className="flex flex-col md:flex-row">
-        <div className="mb-5">
+        <div className="mb-5 md:mr-5">
           {/* Date Filter */}
           <input
             type="date"
             value={startDate}
             onChange={(e) => setStartDate(e.target.value)}
             placeholder="Select date"
+            className="rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary w-full md:w-50"
           />
         </div>
-        <div className="mb-5">
+        <div className="mb-5 md:mr-5">
           {/* Token Number Filter */}
           <input
             type="text"
             value={tokenNumber}
             onChange={(e) => setTokenNumberFilter(e.target.value)}
             placeholder="Enter token number"
+            className="rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary w-full md:w-50"
           />
         </div>
         <div className="mb-5 md:mr-5">
@@ -144,8 +146,8 @@ const CumulativeEntries: React.FC = () => {
           cumulativeData.map((entry, index) => {
              const matchingRange = rangeList.find(
               (range) =>
-                parseInt(entry._id) >= range.startRange &&
-                parseInt(entry._id) <= range.endRange,
+                parseInt(entry.total) >= range.startRange &&
+                parseInt(entry.total) <= range.endRange,
             );
             return(
             
@@ -166,7 +168,7 @@ const CumulativeEntries: React.FC = () => {
             </div>
             )
 })}
-)
+
         </div>
       </div>
     </div>
