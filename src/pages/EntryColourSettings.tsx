@@ -61,7 +61,12 @@ const EntryColourSettings: React.FC = () => {
       month: '2-digit',
       year: 'numeric',
     };
-    return new Date(dateString).toLocaleDateString(undefined, options);
+
+    const [day, month, year] = dateString.split('/');
+
+    const formattedDate = new Date(`${year}-${month}-${day}`);
+
+    return formattedDate.toLocaleDateString(undefined, options);
   };
 
   return (
