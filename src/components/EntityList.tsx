@@ -63,12 +63,9 @@ const EntityList: React.FC = () => {
     drawTime?: string;
   }) => {
     try {
-      const responsePeople = await axios.get(
-        '/api/admin/search-list-entity',
-        {
-          params: params || {},
-        },
-      );
+      const responsePeople = await axios.get('/api/admin/search-list-entity', {
+        params: params || {},
+      });
 
       const responseRange = await axios.get<any>(
         '/api/admin/enitity-rang-list',
@@ -132,21 +129,20 @@ const EntityList: React.FC = () => {
       month: '2-digit',
       year: 'numeric',
     };
-  
-    const [month, day, year] = dateString.split('/');
-  
+
+    const [day, month, year] = dateString.split('/');
+
     const formattedDate = new Date(`${year}-${month}-${day}`);
-  
+
     return formattedDate.toLocaleDateString(undefined, options);
   };
 
   const deleteEntry = async (id: string) => {
     if (window.confirm('Are you sure you want to delete?')) {
       try {
-        const response = await axios.post(
-          '/api/admin/delete-entity-admin',
-          { id },
-        );
+        const response = await axios.post('/api/admin/delete-entity-admin', {
+          id,
+        });
 
         if (response.data.status === 'success') {
           setReFetch((prev) => !prev);
