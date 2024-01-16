@@ -19,6 +19,47 @@ const EntityForm: React.FC = () => {
   const [date, setDate] = useState<Date | null>(new Date());
   const [drawTime, setDrawTime] = useState('');
   const navigate = useNavigate();
+  const [defaultDrawTime, setDefaultDrawTime] = useState('');
+
+  console.log('hai page', drawTimeList, drawTimeList.length);
+
+  const timeProbability = () => {
+    const now = new Date();
+    const nowHours = now.getHours().toString().padStart(2, '0');
+    const nowMinutes = now.getMinutes().toString().padStart(2, '0');
+
+    function stringTimetoInt(timeString: string) {
+      const [hoursStr, minutesStr] = timeString.split(':');
+      const hours = parseInt(hoursStr, 10);
+      const minutes = parseInt(minutesStr, 10);
+      console.log('stringTimetoInt', hours, minutes);
+      return { hours, minutes };
+    }
+
+    for (let i = 0; i < drawTimeList.length; i++) {
+      // console.log(
+      //   nowHours,
+      //   nowMinutes,
+      //   stringTimetoInt(drawTimeList[i].drawTime),
+      //   drawTimeList[i].drawTime,
+      // );
+      const { hours, minutes } = stringTimetoInt(drawTimeList[i].drawTime);
+      // console.log(nowHours, nowMinutes, hours, minutes);
+      console.log("he he he",drawTimeList);
+      
+      if ( parseInt(nowHours) < hours || (parseInt(nowHours) == hours && parseInt(nowMinutes) < minutes )  ) {
+        console.log("selection in if  ",drawTimeList[i].drawTime);
+        setDefaultDrawTime(drawTimeList[i].drawTime);
+        break;
+      }
+    }
+
+    console.log("after loop ",defaultDrawTime);
+    if (!defaultDrawTime) {
+      setDefaultDrawTime(drawTimeList[drawTimeList.length - 1].drawTime);
+    }
+    console.log('defaultDrawTime is ', defaultDrawTime);
+  };
 
   useEffect(() => {
     const fetchDrawTimeList = async () => {
@@ -26,11 +67,15 @@ const EntityForm: React.FC = () => {
         const response = await axios.get<any>(
           '/api/admin/enitity-draw-time-rang-list',
         );
-
         if (response.data.status === 'success') {
+          console.log('success');
           setDrawTimeList(response.data.drawTimeList);
+          console.log('success');
         } else {
-          console.error('API request failed with status:', response.data.status);
+          console.error(
+            'API request failed with status:',
+            response.data.status,
+          );
         }
       } catch (error) {
         console.error('Error fetching draw time list:', error);
@@ -39,9 +84,14 @@ const EntityForm: React.FC = () => {
 
     fetchDrawTimeList();
   }, []);
+  useEffect(() => {
+    if (drawTimeList.length > 0) {
+      timeProbability();
+    }
+  }, [drawTimeList]);
 
   const handleDrawTimeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setDrawTime(e.target.value.toString()); // Parse to string
+    setDrawTime(e.target.value.toString());
   };
 
   const handleTokenNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -71,7 +121,6 @@ const EntityForm: React.FC = () => {
 
       console.log('Entry Added', response.data);
       showAlert('Entry added successfully!', 'success');
-
       navigate('/');
     } catch (error: any) {
       console.error('Error adding entry:', error);
@@ -99,7 +148,7 @@ const EntityForm: React.FC = () => {
                   <input
                     type="text"
                     name="tokenNumber"
-                    value={tokenNumber} 
+                    value={tokenNumber}
                     placeholder="Token Number"
                     onChange={handleTokenNumberChange}
                     className="rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary w-2/3"
@@ -129,9 +178,10 @@ const EntityForm: React.FC = () => {
                     onChange={handleDrawTimeChange}
                     className="rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary w-50"
                   >
-                    <option value="" disabled>
-                      Select Draw Time
+                    <option value={defaultDrawTime} selected>
+                      {defaultDrawTime}
                     </option>
+
                     {drawTimeList.map((drawTime) => (
                       <option key={drawTime._id} value={drawTime.drawTime}>
                         {drawTime.drawTime}
@@ -150,8 +200,6 @@ const EntityForm: React.FC = () => {
                     className="rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary w-50"
                   />
                 </div>
-
-  
               </div>
 
               <div className="flex justify-center mb-10">

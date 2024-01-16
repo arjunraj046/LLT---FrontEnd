@@ -132,7 +132,12 @@ const EntityList: React.FC = () => {
       month: '2-digit',
       year: 'numeric',
     };
-    return new Date(dateString).toLocaleDateString(undefined, options);
+  
+    const [month, day, year] = dateString.split('/');
+  
+    const formattedDate = new Date(`${year}-${month}-${day}`);
+  
+    return formattedDate.toLocaleDateString(undefined, options);
   };
 
   const deleteEntry = async (id: string) => {
