@@ -68,7 +68,8 @@ const SignIn = () => {
 
       if (user.userRole === 1) {
         localStorage.setItem('admin', token);
-
+ 
+        
         navigate('/admin');
       } else if (user.userRole === 2) {
         localStorage.setItem('agent', token);
