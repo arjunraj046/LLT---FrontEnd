@@ -21,7 +21,7 @@ const EntryColourSettings: React.FC = () => {
         console.log('axios is calling');
 
         const response = await axios.get<any>(
-          'http://localhost:5000/api/admin/enitity-rang-list'
+          '/api/admin/enitity-rang-list'
         );
         if (response.data.status === 'success') {
           setRangeList(response.data.rangeList);
@@ -42,7 +42,7 @@ const EntryColourSettings: React.FC = () => {
     if (window.confirm('Are you sure you want to delete?')) {
       try {
         const response = await axios.post(
-          'http://localhost:5000/api/admin/delete-colour-settings',
+          '/api/admin/delete-colour-settings',
           { id }
         );
 

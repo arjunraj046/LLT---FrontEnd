@@ -67,7 +67,7 @@ const EntityForm: React.FC = () => {
     const fetchDrawTimeList = async () => {
       try {
         const response = await axios.get<any>(
-          'http://localhost:5000/api/admin/enitity-draw-time-rang-list'
+          '/api/admin/enitity-draw-time-rang-list'
         );
         if (response.data.status === 'success') {
           console.log('success');
@@ -110,7 +110,7 @@ const EntityForm: React.FC = () => {
 
     try {
       const formattedDate = date?.toISOString().split('T')[0];
-      const response = await axios.post('http://localhost:5000/api/agent/add-entity', {
+      const response = await axios.post('/api/agent/add-entity', {
         _id: _id,
         date: formattedDate,
         tokenNumber,

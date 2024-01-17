@@ -63,9 +63,9 @@ const EntityList: React.FC = () => {
     drawTime?: string;
   }) => {
     try {
-      const responsePeople = await axios.get('http://localhost:5000/api/admin/search-list-entity', {  params: params || {}  });
-      const responseRange = await axios.get<any>('http://localhost:5000/api/admin/enitity-rang-list');//color
-      const drawTimeRange = await axios.get<any>('http://localhost:5000/api/admin/enitity-draw-time-rang-list'); //draw time
+      const responsePeople = await axios.get('/api/admin/search-list-entity', {  params: params || {}  });
+      const responseRange = await axios.get<any>('/api/admin/enitity-rang-list');//color
+      const drawTimeRange = await axios.get<any>('/api/admin/enitity-draw-time-rang-list'); //draw time
 
       if (  responsePeople.data.status === 'success' &&  responseRange.data.status === 'success' &&  drawTimeRange.data.status === 'success') {
         const peopleList = responsePeople.data.list || [];
