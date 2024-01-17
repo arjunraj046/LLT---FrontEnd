@@ -21,14 +21,14 @@ const EntryColourSettings: React.FC = () => {
         console.log('axios is calling');
 
         const response = await axios.get<any>(
-          '/api/admin/enitity-rang-list',
+          'http://localhost:5000/api/admin/enitity-rang-list'
         );
         if (response.data.status === 'success') {
           setRangeList(response.data.rangeList);
         } else {
           console.error(
             'API request failed with status:',
-            response.data.status,
+            response.data.status
           );
         }
       } catch (error) {
@@ -42,12 +42,14 @@ const EntryColourSettings: React.FC = () => {
     if (window.confirm('Are you sure you want to delete?')) {
       try {
         const response = await axios.post(
-          '/api/admin/delete-colour-settings',
-          { id },
+          'http://localhost:5000/api/admin/delete-colour-settings',
+          { id }
         );
 
         if (response.data.status === 'success') {
-          setRangeList((prevList) => prevList.filter((entry) => entry._id !== id));
+          setRangeList((prevList) =>
+            prevList.filter((entry) => entry._id !== id)
+          );
           showAlert('User Entry Deleted successfully!', 'success');
         }
       } catch (error) {
@@ -55,18 +57,15 @@ const EntryColourSettings: React.FC = () => {
       }
     }
   };
-  const formatDate = (dateString: string) => {
-    const options: Intl.DateTimeFormatOptions = {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
-    };
 
-    const [day, month, year] = dateString.split('/');
+  const formatDate = (isoDateString: string) => {
+    const dateObject = new Date(isoDateString);
 
-    const formattedDate = new Date(`${year}-${month}-${day}`);
+    const day = dateObject.getUTCDate().toString().padStart(2, '0');
+    const month = (dateObject.getUTCMonth() + 1).toString().padStart(2, '0');
+    const year = dateObject.getUTCFullYear();
 
-    return formattedDate.toLocaleDateString(undefined, options);
+    return `${day}-${month}-${year}`;
   };
 
   return (
@@ -95,13 +94,12 @@ const EntryColourSettings: React.FC = () => {
             <h5 className="text-sm font-medium uppercase xsm:text-base">
               Date
             </h5>
-            </div>
-            <div className="  p-2.5 text-center xl:p-5">
+          </div>
+          <div className="  p-2.5 text-center xl:p-5">
             <h5 className="text-sm font-medium uppercase xsm:text-base ">
               Action
             </h5>
-            </div>
-          
+          </div>
         </div>
 
         {rangeList.map((range) => (
@@ -122,14 +120,12 @@ const EntryColourSettings: React.FC = () => {
               </p>
             </div>
             <div className="flex items-center justify-center p-2.5 xl:p-5">
-                      <p className="text-white">
-                      <button
-              onClick={() => deleteEntry(range._id)}
-               >
-                          <FontAwesomeIcon icon={faTrash} />
-                        </button>
-                      </p>
-                    </div>
+              <p className="text-white">
+                <button onClick={() => deleteEntry(range._id)}>
+                  <FontAwesomeIcon icon={faTrash} />
+                </button>
+              </p>
+            </div>
           </div>
         ))}
       </div>

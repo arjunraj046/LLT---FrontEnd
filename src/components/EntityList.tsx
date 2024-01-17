@@ -63,22 +63,11 @@ const EntityList: React.FC = () => {
     drawTime?: string;
   }) => {
     try {
-      const responsePeople = await axios.get('/api/admin/search-list-entity', {
-        params: params || {},
-      });
+      const responsePeople = await axios.get('http://localhost:5000/api/admin/search-list-entity', {  params: params || {}  });
+      const responseRange = await axios.get<any>('http://localhost:5000/api/admin/enitity-rang-list');//color
+      const drawTimeRange = await axios.get<any>('http://localhost:5000/api/admin/enitity-draw-time-rang-list'); //draw time
 
-      const responseRange = await axios.get<any>(
-        '/api/admin/enitity-rang-list',
-      );
-      const drawTimeRange = await axios.get<any>(
-        '/api/admin/enitity-draw-time-rang-list',
-      );
-
-      if (
-        responsePeople.data.status === 'success' &&
-        responseRange.data.status === 'success' &&
-        drawTimeRange.data.status === 'success'
-      ) {
+      if (  responsePeople.data.status === 'success' &&  responseRange.data.status === 'success' &&  drawTimeRange.data.status === 'success') {
         const peopleList = responsePeople.data.list || [];
         const rangeListData = responseRange.data.rangeList || [];
         const totalCountData = responsePeople.data.totalCount || 0;
@@ -123,19 +112,16 @@ const EntityList: React.FC = () => {
     }
   }, [dateFilter, searchTerm, drawTime, reFetch]);
 
-  const formatDate = (dateString: string) => {
-    const options: Intl.DateTimeFormatOptions = {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
-    };
+  
+const formatDate = (isoDateString: string) => {
+  const dateObject = new Date(isoDateString);
 
-    const [day, month, year] = dateString.split('/');
+  const day = dateObject.getUTCDate().toString().padStart(2, '0');
+  const month = (dateObject.getUTCMonth() + 1).toString().padStart(2, '0'); 
+  const year = dateObject.getUTCFullYear();
 
-    const formattedDate = new Date(`${year}-${month}-${day}`);
-
-    return formattedDate.toLocaleDateString(undefined, options);
-  };
+  return `${day}-${month}-${year}`;
+};
 
   const deleteEntry = async (id: string) => {
     if (window.confirm('Are you sure you want to delete?')) {

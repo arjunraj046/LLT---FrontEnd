@@ -2,9 +2,7 @@ import axios from 'axios';
 import React, { useState, useEffect } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-// import { useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
-// import { user } from '../../redux/reducer/userSlice';
 import { showAlert } from '../../components/tosterComponents/tost';
 
 interface DrawTime {
@@ -37,26 +35,30 @@ const EntityForm: React.FC = () => {
     }
 
     for (let i = 0; i < drawTimeList.length; i++) {
+      
       // console.log(
       //   nowHours,
       //   nowMinutes,
       //   stringTimetoInt(drawTimeList[i].drawTime),
       //   drawTimeList[i].drawTime,
       // );
-      const { hours, minutes } = stringTimetoInt(drawTimeList[i].drawTime);
-      // console.log(nowHours, nowMinutes, hours, minutes);
-      console.log("he he he",drawTimeList);
       
-      if ( parseInt(nowHours) < hours || (parseInt(nowHours) == hours && parseInt(nowMinutes) < minutes )  ) {
-        console.log("selection in if  ",drawTimeList[i].drawTime);
+      const { hours, minutes } = stringTimetoInt(drawTimeList[i].drawTime);
+      
+      // console.log(nowHours, nowMinutes, hours, minutes);
+      
+      console.log('he he he', drawTimeList);
+
+      if ( parseInt(nowHours) < hours || (parseInt(nowHours) == hours && parseInt(nowMinutes) < minutes ) ) {
+        console.log('selection in if  ', drawTimeList[i].drawTime);
         setDefaultDrawTime(drawTimeList[i].drawTime);
         break;
       }
     }
 
-    console.log("after loop ",defaultDrawTime);
+    console.log('after loop ', defaultDrawTime);
     if (!defaultDrawTime) {
-      setDefaultDrawTime(drawTimeList[drawTimeList.length - 1].drawTime);
+      setDefaultDrawTime(drawTimeList[0].drawTime);
     }
     console.log('defaultDrawTime is ', defaultDrawTime);
   };
@@ -65,7 +67,7 @@ const EntityForm: React.FC = () => {
     const fetchDrawTimeList = async () => {
       try {
         const response = await axios.get<any>(
-          '/api/admin/enitity-draw-time-rang-list',
+          'http://localhost:5000/api/admin/enitity-draw-time-rang-list'
         );
         if (response.data.status === 'success') {
           console.log('success');
@@ -74,7 +76,7 @@ const EntityForm: React.FC = () => {
         } else {
           console.error(
             'API request failed with status:',
-            response.data.status,
+            response.data.status
           );
         }
       } catch (error) {
@@ -108,21 +110,18 @@ const EntityForm: React.FC = () => {
 
     try {
       const formattedDate = date?.toISOString().split('T')[0];
-      const response = await axios.post(
-        '/api/agent/add-entity',
-        {
-          _id: _id,
-          date: formattedDate,
-          tokenNumber,
-          count,
-          drawTime,
-        },
-      );
+      const response = await axios.post('http://localhost:5000/api/agent/add-entity', {
+        _id: _id,
+        date: formattedDate,
+        tokenNumber,
+        count,
+        drawTime,
+      });
 
       console.log('Entry Added', response.data);
       showAlert('Entry added successfully!', 'success');
       navigate('/');
-    } catch (error: any) {
+    } catch (error:any) {
       console.error('Error adding entry:', error);
       showAlert(error?.response?.data?.error, 'error');
     }
