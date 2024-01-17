@@ -51,8 +51,8 @@ const SignIn = () => {
     setCredentials(data);
     try {
       const response = await axios.post(
-        '/api/auth/login',
-        data,
+        'http://localhost:5000/api/auth/login',
+        data
       );
       const { token, user } = response.data;
       const userdata = {
@@ -83,7 +83,7 @@ const SignIn = () => {
       }
 
       console.log('Login successful!', response.data);
-    } catch (error: any) {
+    } catch (error:any) {
       showAlert(error?.response?.data?.error, 'error');
       console.error('Error logging in:' + error?.response?.data?.error, error);
     }
