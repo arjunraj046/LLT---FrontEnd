@@ -103,16 +103,13 @@ const EntityForm: React.FC = () => {
 
     try {
       const formattedDate = date?.toISOString().split('T')[0];
-      const response = await axios.post(
-        '/api/agent/add-entity',
-        {
-          _id: _id,
-          date: formattedDate,
-          tokenNumber,
-          count,
-          drawTime,
-        }
-      );
+      const response = await axios.post('/api/agent/add-entity', {
+        _id: _id,
+        date: formattedDate,
+        tokenNumber,
+        count,
+        drawTime,
+      });
 
       console.log('Entry Added', response.data);
       // showAlert('Entry added successfully!', 'success');
