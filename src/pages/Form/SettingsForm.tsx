@@ -56,7 +56,7 @@ const SettingsForm = () => {
 
     try {
       const response = await axios.post(
-        'http://localhost:5000/api/admin/enitity-rang',
+        '/api/admin/enitity-rang',
         userWithColor,
       );
       console.log('User registered:', response.data);
