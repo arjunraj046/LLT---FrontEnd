@@ -17,9 +17,7 @@ const EntityForm: React.FC = () => {
   const [date, setDate] = useState<Date | null>(new Date());
   const [drawTime, setDrawTime] = useState('');
   const navigate = useNavigate();
-  const [defaultDrawTime, setDefaultDrawTime] = useState('');
-
-  console.log('hai page', drawTimeList, drawTimeList.length);
+  const [defaultDrawTime, setDefaultDrawTime] = useState<string>('');
 
   const timeProbability = () => {
     const now = new Date();
@@ -30,28 +28,21 @@ const EntityForm: React.FC = () => {
       const [hoursStr, minutesStr] = timeString.split(':');
       const hours = parseInt(hoursStr, 10);
       const minutes = parseInt(minutesStr, 10);
-      console.log('stringTimetoInt', hours, minutes);
+    
       return { hours, minutes };
     }
 
     for (let i = 0; i < drawTimeList.length; i++) {
-      
-      // console.log(
-      //   nowHours,
-      //   nowMinutes,
-      //   stringTimetoInt(drawTimeList[i].drawTime),
-      //   drawTimeList[i].drawTime,
-      // );
-      
       const { hours, minutes } = stringTimetoInt(drawTimeList[i].drawTime);
-      
-      // console.log(nowHours, nowMinutes, hours, minutes);
-      
-      console.log('he he he', drawTimeList);
 
-      if ( parseInt(nowHours) < hours || (parseInt(nowHours) == hours && parseInt(nowMinutes) < minutes ) ) {
+      if (
+        parseInt(nowHours) < hours ||
+        (parseInt(nowHours) == hours && parseInt(nowMinutes) < minutes)
+      ) {
         console.log('selection in if  ', drawTimeList[i].drawTime);
-        setDefaultDrawTime(drawTimeList[i].drawTime);
+        let data = drawTimeList[i].drawTime;
+        setDefaultDrawTime(data);
+        console.log(' if  ', defaultDrawTime);
         break;
       }
     }
@@ -86,11 +77,13 @@ const EntityForm: React.FC = () => {
 
     fetchDrawTimeList();
   }, []);
+
   useEffect(() => {
     if (drawTimeList.length > 0) {
       timeProbability();
     }
   }, [drawTimeList]);
+
 
   const handleDrawTimeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setDrawTime(e.target.value.toString());
@@ -110,16 +103,19 @@ const EntityForm: React.FC = () => {
 
     try {
       const formattedDate = date?.toISOString().split('T')[0];
-      const response = await axios.post('/api/agent/add-entity', {
-        _id: _id,
-        date: formattedDate,
-        tokenNumber,
-        count,
-        drawTime,
-      });
+      const response = await axios.post(
+        '/api/agent/add-entity',
+        {
+          _id: _id,
+          date: formattedDate,
+          tokenNumber,
+          count,
+          drawTime,
+        }
+      );
 
       console.log('Entry Added', response.data);
-      showAlert('Entry added successfully!', 'success');
+      // showAlert('Entry added successfully!', 'success');
       navigate('/');
     } catch (error:any) {
       console.error('Error adding entry:', error);
