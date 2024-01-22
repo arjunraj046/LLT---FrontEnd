@@ -15,44 +15,44 @@ const EntityForm: React.FC = () => {
   const [tokenNumber, setTokenNumber] = useState<string>('');
   const [count, setCount] = useState('');
   const [date, setDate] = useState<Date | null>(new Date());
-  const [drawTime, setDrawTime] = useState('');
+  const [drawTime, setDrawTime] = useState<string>('');
   const navigate = useNavigate();
   const [defaultDrawTime, setDefaultDrawTime] = useState<string>('');
 
-  const timeProbability = () => {
-    const now = new Date();
-    const nowHours = now.getHours().toString().padStart(2, '0');
-    const nowMinutes = now.getMinutes().toString().padStart(2, '0');
+  // const timeProbability = () => {
+  //   const now = new Date();
+  //   const nowHours = now.getHours().toString().padStart(2, '0');
+  //   const nowMinutes = now.getMinutes().toString().padStart(2, '0');
 
-    function stringTimetoInt(timeString: string) {
-      const [hoursStr, minutesStr] = timeString.split(':');
-      const hours = parseInt(hoursStr, 10);
-      const minutes = parseInt(minutesStr, 10);
+  //   function stringTimetoInt(timeString: string) {
+  //     const [hoursStr, minutesStr] = timeString.split(':');
+  //     const hours = parseInt(hoursStr, 10);
+  //     const minutes = parseInt(minutesStr, 10);
     
-      return { hours, minutes };
-    }
+  //     return { hours, minutes };
+  //   }
 
-    for (let i = 0; i < drawTimeList.length; i++) {
-      const { hours, minutes } = stringTimetoInt(drawTimeList[i].drawTime);
+  //   for (let i = 0; i < drawTimeList.length; i++) {
+  //     const { hours, minutes } = stringTimetoInt(drawTimeList[i].drawTime);
 
-      if (
-        parseInt(nowHours) < hours ||
-        (parseInt(nowHours) == hours && parseInt(nowMinutes) < minutes)
-      ) {
-        console.log('selection in if  ', drawTimeList[i].drawTime);
-        let data = drawTimeList[i].drawTime;
-        setDefaultDrawTime(data);
-        console.log(' if  ', defaultDrawTime);
-        break;
-      }
-    }
+  //     if (
+  //       parseInt(nowHours) < hours ||
+  //       (parseInt(nowHours) == hours && parseInt(nowMinutes) < minutes)
+  //     ) {
+  //       console.log('selection in if  ', drawTimeList[i].drawTime);
+  //       let data = drawTimeList[i].drawTime;
+  //       setDefaultDrawTime(data);
+  //       console.log(' if  ', defaultDrawTime);
+  //       break;
+  //     }
+  //   }
 
-    console.log('after loop ', defaultDrawTime);
-    if (!defaultDrawTime) {
-      setDefaultDrawTime(drawTimeList[0].drawTime);
-    }
-    console.log('defaultDrawTime is ', defaultDrawTime);
-  };
+  //   console.log('after loop ', defaultDrawTime);
+  //   if (!defaultDrawTime) {
+  //     setDefaultDrawTime(drawTimeList[0].drawTime);
+  //   }
+  //   console.log('defaultDrawTime is ', defaultDrawTime);
+  // };
 
   useEffect(() => {
     const fetchDrawTimeList = async () => {
@@ -61,30 +61,24 @@ const EntityForm: React.FC = () => {
           '/api/admin/enitity-draw-time-rang-list'
         );
         if (response.data.status === 'success') {
-          console.log('success');
           setDrawTimeList(response.data.drawTimeList);
-          console.log('success');
+  
+          // Set the default draw time and draw time when the drawTimeList changes
+          if (response.data.drawTimeList.length > 0) {
+            const firstDrawTime = response.data.drawTimeList[0].drawTime;
+            setDefaultDrawTime(firstDrawTime);
+            setDrawTime(firstDrawTime);
+          }
         } else {
-          console.error(
-            'API request failed with status:',
-            response.data.status
-          );
+          console.error('API request failed with status:', response.data.status);
         }
       } catch (error) {
         console.error('Error fetching draw time list:', error);
       }
     };
-
+  
     fetchDrawTimeList();
   }, []);
-
-  useEffect(() => {
-    if (drawTimeList.length > 0) {
-      timeProbability();
-    }
-  }, [drawTimeList]);
-
-
   const handleDrawTimeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setDrawTime(e.target.value.toString());
   };
@@ -112,9 +106,8 @@ const EntityForm: React.FC = () => {
       });
 
       console.log('Entry Added', response.data);
-      // showAlert('Entry added successfully!', 'success');
       navigate('/');
-    } catch (error:any) {
+    } catch (error: any) {
       console.error('Error adding entry:', error);
       showAlert(error?.response?.data?.error, 'error');
     }
@@ -166,14 +159,10 @@ const EntityForm: React.FC = () => {
                   </label>
                   <select
                     name="drawTime"
-                    value={drawTime}
+                    value={drawTime || defaultDrawTime} // Use drawTime or defaultDrawTime as the value
                     onChange={handleDrawTimeChange}
                     className="rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary w-50"
                   >
-                    <option value={defaultDrawTime} selected>
-                      {defaultDrawTime}
-                    </option>
-
                     {drawTimeList.map((drawTime) => (
                       <option key={drawTime._id} value={drawTime.drawTime}>
                         {drawTime.drawTime}
