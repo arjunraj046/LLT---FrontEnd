@@ -54,7 +54,7 @@ const EntityForm: React.FC = () => {
   //   console.log('defaultDrawTime is ', defaultDrawTime);
   // };
 
-  useEffect(() => {
+ useEffect(() => {
     const fetchDrawTimeList = async () => {
       try {
         const response = await axios.get<any>(
@@ -66,33 +66,31 @@ const EntityForm: React.FC = () => {
           // Set the default draw time and draw time when the drawTimeList changes
           if (response.data.drawTimeList.length > 0) {
             // Get the current time
-            const currentTime = new Date().toLocaleTimeString('en-US', {
-              hour: 'numeric',
-              minute: 'numeric',
-              hour12: true,
-            });
+            const currentTime = new Date();
+            const currentMinutes = currentTime.getHours() * 60 + currentTime.getMinutes();
 
             // Find the closest draw time
-            const closestDrawTime: DrawTime = response.data.drawTimeList.reduce(
-              (closest: DrawTime, drawTime: DrawTime) => {
+            let closestDrawTime: DrawTime | null = null;
+            let minTimeDifference = Infinity;
+
+            response.data.drawTimeList.forEach((drawTime: DrawTime) => {
+              // Type guard to ensure 'drawTime' property exists
+              if (typeof drawTime.drawTime === 'string') {
                 const drawTimeDate = new Date(`2000-01-01T${drawTime.drawTime}`);
-                const closestDate = new Date(`2000-01-01T${closest.drawTime}`);
-                const currentDate = new Date(`2000-01-01T${currentTime}`);
+                const drawTimeMinutes = drawTimeDate.getHours() * 60 + drawTimeDate.getMinutes();
+                const timeDifference = Math.abs(drawTimeMinutes - currentMinutes);
 
-                const drawTimeDiff = Math.abs(
-                  drawTimeDate.getTime() - currentDate.getTime()
-                );
-                const closestDiff = Math.abs(
-                  closestDate.getTime() - currentDate.getTime()
-                );
+                if (timeDifference < minTimeDifference) {
+                  closestDrawTime = drawTime;
+                  minTimeDifference = timeDifference;
+                }
+              }
+            });
 
-                return drawTimeDiff < closestDiff ? drawTime : closest;
-              },
-              response.data.drawTimeList[0]
-            );
-
-            setDefaultDrawTime(closestDrawTime.drawTime);
-            setDrawTime(closestDrawTime.drawTime);
+            if (closestDrawTime) {
+              setDefaultDrawTime(closestDrawTime.drawTime);
+              setDrawTime(closestDrawTime.drawTime);
+            }
           }
         } else {
           console.error('API request failed with status:', response.data.status);
@@ -104,6 +102,7 @@ const EntityForm: React.FC = () => {
 
     fetchDrawTimeList();
   }, []);
+
   const handleDrawTimeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setDrawTime(e.target.value.toString());
   };
