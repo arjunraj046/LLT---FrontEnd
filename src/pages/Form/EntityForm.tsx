@@ -62,12 +62,37 @@ const EntityForm: React.FC = () => {
         );
         if (response.data.status === 'success') {
           setDrawTimeList(response.data.drawTimeList);
-  
+
           // Set the default draw time and draw time when the drawTimeList changes
           if (response.data.drawTimeList.length > 0) {
-            const firstDrawTime = response.data.drawTimeList[0].drawTime;
-            setDefaultDrawTime(firstDrawTime);
-            setDrawTime(firstDrawTime);
+            // Get the current time
+            const currentTime = new Date().toLocaleTimeString('en-US', {
+              hour: 'numeric',
+              minute: 'numeric',
+              hour12: true,
+            });
+
+            // Find the closest draw time
+            const closestDrawTime: DrawTime = response.data.drawTimeList.reduce(
+              (closest: DrawTime, drawTime: DrawTime) => {
+                const drawTimeDate = new Date(`2000-01-01T${drawTime.drawTime}`);
+                const closestDate = new Date(`2000-01-01T${closest.drawTime}`);
+                const currentDate = new Date(`2000-01-01T${currentTime}`);
+
+                const drawTimeDiff = Math.abs(
+                  drawTimeDate.getTime() - currentDate.getTime()
+                );
+                const closestDiff = Math.abs(
+                  closestDate.getTime() - currentDate.getTime()
+                );
+
+                return drawTimeDiff < closestDiff ? drawTime : closest;
+              },
+              response.data.drawTimeList[0]
+            );
+
+            setDefaultDrawTime(closestDrawTime.drawTime);
+            setDrawTime(closestDrawTime.drawTime);
           }
         } else {
           console.error('API request failed with status:', response.data.status);
@@ -76,7 +101,7 @@ const EntityForm: React.FC = () => {
         console.error('Error fetching draw time list:', error);
       }
     };
-  
+
     fetchDrawTimeList();
   }, []);
   const handleDrawTimeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
