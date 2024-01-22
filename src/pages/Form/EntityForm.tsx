@@ -54,7 +54,7 @@ const EntityForm: React.FC = () => {
   //   console.log('defaultDrawTime is ', defaultDrawTime);
   // };
 
- useEffect(() => {
+  useEffect(() => {
     const fetchDrawTimeList = async () => {
       try {
         const response = await axios.get<any>(
@@ -78,11 +78,15 @@ const EntityForm: React.FC = () => {
               if (typeof drawTime.drawTime === 'string') {
                 const drawTimeDate = new Date(`2000-01-01T${drawTime.drawTime}`);
                 const drawTimeMinutes = drawTimeDate.getHours() * 60 + drawTimeDate.getMinutes();
-                const timeDifference = Math.abs(drawTimeMinutes - currentMinutes);
 
-                if (timeDifference < minTimeDifference) {
-                  closestDrawTime = drawTime;
-                  minTimeDifference = timeDifference;
+                // Adjust the condition to consider only future draw times
+                if (drawTimeMinutes >= currentMinutes) {
+                  const timeDifference = Math.abs(drawTimeMinutes - currentMinutes);
+
+                  if (timeDifference < minTimeDifference) {
+                    closestDrawTime = drawTime;
+                    minTimeDifference = timeDifference;
+                  }
                 }
               }
             });
@@ -102,7 +106,6 @@ const EntityForm: React.FC = () => {
 
     fetchDrawTimeList();
   }, []);
-
   const handleDrawTimeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setDrawTime(e.target.value.toString());
   };
