@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTicket, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faTicket, faTrash, faPrint } from '@fortawesome/free-solid-svg-icons';
 import { useSelector } from 'react-redux';
 import { user } from '../../redux/reducer/userSlice';
 import { Link } from 'react-router-dom';
 import { showAlert } from '../../components/tosterComponents/tost';
+import jsPDF from 'jspdf';
 
 const DashboardAgent: React.FC = () => {
   const UserData = useSelector(user);
@@ -14,13 +15,55 @@ const DashboardAgent: React.FC = () => {
   const [list, setList] = useState<any[]>([]);
   const [reFetch, setReFetch] = useState<boolean>(false);
 
+  const [selectedPerson, setSelectedPerson] = useState<any | null>(null);
+
+  const handlePrint = (person: any) => {
+    setSelectedPerson(person);
+    generatePDF(person);
+  };
+
+  const generatePDF = (person: any) => {
+    const pdf = new jsPDF();
+  
+    const formatDate = (dateString: string) => {
+      const options: Intl.DateTimeFormatOptions = { year: 'numeric', month: 'long', day: 'numeric' };
+      return new Date(dateString).toLocaleDateString('en-US', options);
+    };
+  
+    const formatTime = (timeString: string) => {
+      const options: Intl.DateTimeFormatOptions = { hour: 'numeric', minute: 'numeric', hour12: true };
+      return new Date(`2000-01-01 ${timeString}`).toLocaleTimeString('en-US', options);
+    };
+    
+    // Add a clean border to the entire page
+    pdf.rect(5, 5, pdf.internal.pageSize.getWidth() - 10, pdf.internal.pageSize.getHeight() - 10);
+  
+    // Add a header
+    pdf.setFontSize(16);
+    pdf.text('Token Details', pdf.internal.pageSize.getWidth() / 2, 15, { align: 'center' });
+  
+    // Reset font size for the content
+    pdf.setFontSize(12);
+  
+    pdf.text(`Agent Name: ${person.userName}`, 10, 30);
+    pdf.text(`Token Number: ${person.tokenNumber}`, 10, 40);
+    pdf.text(`Count: ${person.count}`, 10, 50);
+    pdf.text(`Date: ${formatDate(person.date)}`, 10, 60);
+    pdf.text(`Draw Time: ${formatTime(person.drawTime)}`, 10, 70);
+  
+    // Add more content as needed
+  
+    pdf.save('invoice.pdf');
+  };
+  
+
   useEffect(() => {
     const fetchUserDetails = async () => {
       try {
-        const _id =  localStorage.getItem('agentID');
-        const token =  localStorage.getItem('token');
-        console.log(_id)
-        console.log(token)
+        const _id = localStorage.getItem('agentID');
+        const token = localStorage.getItem('token');
+        console.log(_id);
+        console.log(token);
         const response = await axios.post<any>(
           '/api/agent/entity',
           { UserData, _id },
@@ -80,7 +123,7 @@ const DashboardAgent: React.FC = () => {
       </div>
 
       <div className="flex flex-col">
-        <div className="grid grid-cols-5 rounded-sm bg-gray-2 dark:bg-meta-4 sm:grid-cols-5 p-2.5">
+        <div className="grid grid-cols-6 rounded-sm bg-gray-2 dark:bg-meta-4 sm:grid-cols-6 p-2.5">
           <h5 className="text-sm font-medium uppercase xsm:text-base text-center">
             Token Number
           </h5>
@@ -93,16 +136,13 @@ const DashboardAgent: React.FC = () => {
           <h5 className="text-sm font-medium uppercase xsm:text-base text-center">
             Draw Time
           </h5>
-
-          <h5 className="text-sm font-medium uppercase xsm:text-base text-center">
-            Action
-          </h5>
         </div>
 
         {list.map((person) => (
+          
           <div
             key={person._id}
-            className="grid grid-cols-5 border-b border-stroke dark:border-strokedark sm:grid-cols-5 p-2.5"
+            className="grid grid-cols-6 border-b border-stroke dark:border-strokedark sm:grid-cols-6 p-2.5"
           >
             <div className="flex items-center justify-center">
               <p className="text-black dark:text-white">{person.tokenNumber}</p>
@@ -110,7 +150,6 @@ const DashboardAgent: React.FC = () => {
             <div className="flex items-center justify-center">
               <p className="text-black dark:text-white">{person.count}</p>
             </div>
-
             <div className="flex items-center justify-center ">
               <p className="text-black dark:text-white">
                 {formatDate(person.date)}
@@ -121,10 +160,15 @@ const DashboardAgent: React.FC = () => {
             </div>
             <div className="flex items-center justify-center">
               <p className="text-meta-5">
-                <button
-                  onClick={() => deleteEntry(person._id)}
-                  >
+                <button onClick={() => deleteEntry(person._id)}>
                   <FontAwesomeIcon icon={faTrash} />
+                </button>
+              </p>
+            </div>
+            <div className="flex items-center justify-center">
+              <p className="text-meta-5">
+                <button onClick={() => handlePrint(person)}>
+                  <FontAwesomeIcon icon={faPrint} />
                 </button>
               </p>
             </div>
