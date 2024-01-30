@@ -7,6 +7,7 @@ import { showAlert } from '../../components/tosterComponents/tost';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm } from 'react-hook-form';
+import { backend_Url } from '../../api/server';
 
 const signInSchema = yup.object().shape({
   userName: yup
@@ -51,7 +52,7 @@ const SignIn = () => {
     setCredentials(data);
     try {
       const response = await axios.post(
-        '/api/auth/login',
+        `${backend_Url}/api/auth/login`,
         data
       );
       const { token, user } = response.data;

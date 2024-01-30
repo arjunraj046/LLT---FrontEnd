@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMagnifyingGlass, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { backend_Url } from '../api/server';
+
 
 const CumulativeEntries: React.FC = () => {
   const [cumulativeData, setCumulativeData] = useState<any[]>([]);
@@ -11,6 +13,7 @@ const CumulativeEntries: React.FC = () => {
   const [drawTime, setDrawTime] = useState<string>('');
   const [rangeList, setRangeList] = useState<any[]>([]);
   const [noRecordsFound, setNoRecordsFound] = useState<boolean>(false);
+
 
   interface Params {
     tokenNumber?: string;
@@ -22,7 +25,7 @@ const CumulativeEntries: React.FC = () => {
   useEffect(() => {
     const fetchDrawTimeList = async () => {
       try {
-        const drawTimeListResponse = await axios.get<any>('/api/admin/enitity-draw-time-rang-list');
+        const drawTimeListResponse = await axios.get<any>(`${backend_Url}/api/admin/enitity-draw-time-rang-list`);
         setDrawTimeList(drawTimeListResponse.data.drawTimeList || []); 
       } catch (error) {
         console.error('Error fetching draw time list:', error);
@@ -31,7 +34,7 @@ const CumulativeEntries: React.FC = () => {
 
     const fetchRangeList = async () => {
       try {
-        const rangeListResponse = await axios.get<any>('/api/admin/enitity-rang-list');
+        const rangeListResponse = await axios.get<any>(`${backend_Url}/api/admin/enitity-rang-list`);
         setRangeList(rangeListResponse.data.rangeList || []); 
       } catch (error) {
         console.error('Error fetching range list:', error);
@@ -45,7 +48,7 @@ const CumulativeEntries: React.FC = () => {
 
   const fetchData = async (params?: Params) => {
     try {
-      const response = await axios.get('/api/admin/list-entity-cumulative', {
+      const response = await axios.get(`${backend_Url}/api/admin/list-entity-cumulative`, {
         params: params || {},
       });
 

@@ -7,6 +7,7 @@ import { user } from '../../redux/reducer/userSlice';
 import { Link } from 'react-router-dom';
 import { showAlert } from '../../components/tosterComponents/tost';
 import jsPDF from 'jspdf';
+import { backend_Url } from '../../api/server';
 
 const DashboardAgent: React.FC = () => {
   const UserData = useSelector(user);
@@ -65,7 +66,7 @@ const DashboardAgent: React.FC = () => {
         console.log(_id);
         console.log(token);
         const response = await axios.post<any>(
-          '/api/agent/entity',
+          `${backend_Url}/api/agent/entity`,
           { UserData, _id },
           {
             headers: {
@@ -98,7 +99,7 @@ const DashboardAgent: React.FC = () => {
         console.log(id);
 
         const response = await axios.post(
-          '/api/agent/delete-entity-agent',
+          `${backend_Url}/api/agent/delete-entity-agent`,
           { id },
         );
         console.log('API call successful!', response.data);

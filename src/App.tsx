@@ -7,7 +7,6 @@ import SignIn from './pages/Authentication/SignIn';
 import Loader from './common/Loader';
 import AdminRoute from './routes/adminRoute';
 import AgentRoute from './routes/agentRoute';
-import { ToastContainer } from 'react-toastify';
 
 function App() {
   const [loading, setLoading] = useState<boolean>(true);

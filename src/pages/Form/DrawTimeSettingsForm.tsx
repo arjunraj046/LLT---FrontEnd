@@ -2,6 +2,7 @@ import React, { useState, ChangeEvent, FormEvent } from 'react';
 import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
 import { showAlert } from '../../components/tosterComponents/tost';
+import { backend_Url } from '../../api/server';
 
 const DrawTimeSettingsForm: React.FC = () => {
   const [time, setTime] = useState<string>('');
@@ -23,7 +24,7 @@ const DrawTimeSettingsForm: React.FC = () => {
 
     try {
       const response = await axios.post(
-        '/api/admin/draw-time',
+        `${backend_Url}/api/admin/draw-time`,
         {
           time: time,
         },

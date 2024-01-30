@@ -5,6 +5,7 @@ import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm } from 'react-hook-form';
 import { showAlert } from '../components/tosterComponents/tost';
+import { backend_Url } from '../api/server';
 
 const EditAgentPassword = () => {
   const navigate = useNavigate();
@@ -58,7 +59,7 @@ const EditAgentPassword = () => {
   
     try {
       const response = await axios.post(
-        '/api/admin/change-agentpassword',
+        `${backend_Url}/api/admin/change-agentpassword`,
         user
       );
       console.log('User registered:', response.data);

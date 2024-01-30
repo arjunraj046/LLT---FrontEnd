@@ -4,6 +4,8 @@ import { Link } from 'react-router-dom';
 import { showAlert } from '../components/tosterComponents/tost';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMagnifyingGlass, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { backend_Url } from '../api/server';
+
 interface Range {
   _id: string;
   startRange: number;
@@ -21,7 +23,7 @@ const EntryColourSettings: React.FC = () => {
         console.log('axios is calling');
 
         const response = await axios.get<any>(
-          '/api/admin/enitity-rang-list'
+          `${backend_Url}/api/admin/enitity-rang-list`
         );
         if (response.data.status === 'success') {
           setRangeList(response.data.rangeList);
@@ -42,7 +44,7 @@ const EntryColourSettings: React.FC = () => {
     if (window.confirm('Are you sure you want to delete?')) {
       try {
         const response = await axios.post(
-          '/api/admin/delete-colour-settings',
+          `${backend_Url}/api/admin/delete-colour-settings`,
           { id }
         );
 

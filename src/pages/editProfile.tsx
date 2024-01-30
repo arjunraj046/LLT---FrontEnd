@@ -5,6 +5,7 @@ import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { showAlert } from '../components/tosterComponents/tost';
+import { backend_Url } from '../api/server';
 
 interface FormValues {
   _id: string;
@@ -57,7 +58,7 @@ const EditAgentProfile = () => {
     const fetchAgentData = async () => {
       try {
         const response = await axios.get(
-          `/api/admin/agent/${id}`
+          `${backend_Url}/api/admin/agent/${id}`
         );
         const {
           _id,
@@ -110,7 +111,7 @@ const EditAgentProfile = () => {
       console.log(newData);
 
       const response = await axios.post(
-        '/api/admin/edit-agent',
+        `${backend_Url}/api/admin/edit-agent`,
         newData
       );
       console.log('User updated:', response.data);
