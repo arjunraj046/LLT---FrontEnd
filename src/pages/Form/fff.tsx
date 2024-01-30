@@ -18,13 +18,13 @@ interface DrawTime {
 interface TokenSet {
   tokenNumber: string;
   count: string;
-  drawTime: string;
-  date: Date | null;
 }
 
 const EntityForm: React.FC = () => {
   const [drawTimeList, setDrawTimeList] = useState<DrawTime[]>([]);
   const [defaultDrawTime, setDefaultDrawTime] = useState<string>('');
+  const [drawTime, setDrawTime] = useState<string>('none');
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -67,6 +67,7 @@ const EntityForm: React.FC = () => {
 
             if (closestDrawTime) {
               setDefaultDrawTime(closestDrawTime.drawTime);
+              setDrawTime(closestDrawTime.drawTime);
             }
           }
         } else {
@@ -85,11 +86,14 @@ const EntityForm: React.FC = () => {
 
   const formik = useFormik({
     initialValues: {
-      tokenSets: [
-        { tokenNumber: '', count: '', drawTime: '', date: new Date() },
-      ],
+      drawTime: drawTime,
+      date: new Date(),
+      tokenSets: [{ tokenNumber: '', count: '' }],
     },
     validationSchema: Yup.object().shape({
+      drawTime: Yup.string(),
+      // .required('Draw Time is required'),
+      date: Yup.date().required('Select a date'),
       tokenSets: Yup.array().of(
         Yup.object().shape({
           tokenNumber: Yup.string()
@@ -104,8 +108,6 @@ const EntityForm: React.FC = () => {
               /^[1-9]\d*$/,
               'Token Count must be a number greater than 0',
             ),
-          drawTime: Yup.string().required('Draw Time is required'),
-          date: Yup.date().required('Select a date'),
         }),
       ),
     }),
@@ -113,16 +115,30 @@ const EntityForm: React.FC = () => {
       console.log('values', values);
 
       const _id = localStorage.getItem('agentID');
+      console.log('11111', values.drawTime, values.drawTime.length == 0);
+      console.log('22222', drawTime, values.drawTime, defaultDrawTime);
+      let ddtime;
+      if (values.drawTime.length > 0) {
+        ddtime = values.drawTime;
+      } else {
+        ddtime = drawTime;
+      }
+      console.log('3333', ddtime);
 
       try {
-        const formattedDate = values.tokenSets[0]?.date
-          ?.toISOString()
-          .split('T')[0];
+        console.log(ddtime);
+
         const response = await axios.post(
           `${backend_Url}/api/agent/add-entity`,
           {
             _id: _id,
-            values,
+
+            drawTime: ddtime,
+            date: values.date.toISOString().split('T')[0],
+            tokenSets: values.tokenSets.map((tokenSet) => ({
+              tokenNumber: tokenSet.tokenNumber,
+              count: tokenSet.count,
+            })),
           },
         );
 
@@ -145,6 +161,51 @@ const EntityForm: React.FC = () => {
                 <h3 className="font-medium text-black dark:text-white">
                   Add Token
                 </h3>
+              </div>
+              <div className="flex flex-col gap-5.5 p-6.5">
+                <div>
+                  <label className="mb-3 block text-black dark:text-white">
+                    Draw Time
+                  </label>
+                  <select
+                    name="drawTime"
+                    value={formik.values.drawTime || drawTime}
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
+                    className={`rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary w-2/3 ${
+                      formik.touched.drawTime && formik.errors.drawTime
+                        ? 'border-red-500'
+                        : ''
+                    }`}
+                  >
+                    {drawTimeList.map((drawTime) => (
+                      <option key={drawTime._id} value={drawTime.drawTime}>
+                        {drawTime.drawTime}
+                      </option>
+                    ))}
+                  </select>
+                  {formik.touched.drawTime && formik.errors.drawTime ? (
+                    <div className="text-red-500">{formik.errors.drawTime}</div>
+                  ) : null}
+                </div>
+
+                <div>
+                  <label className="mb-3 block text-black dark:text-white">
+                    Select date
+                  </label>
+                  <DatePicker
+                    selected={formik.values.date}
+                    onChange={(date) => formik.setFieldValue('date', date)}
+                    className={`rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary w-2/3 ${
+                      formik.touched.date && formik.errors.date
+                        ? 'border-red-500'
+                        : ''
+                    }`}
+                  />
+                  {formik.touched.date && formik.errors.date ? (
+                    <div className="text-red-500">{formik.errors.date}</div>
+                  ) : null}
+                </div>
               </div>
 
               {formik.values.tokenSets.map((tokenSet, index) => (
@@ -202,60 +263,6 @@ const EntityForm: React.FC = () => {
                     ) : null}
                   </div>
 
-                  <div>
-                    <label className="mb-3 block text-black dark:text-white">
-                      Draw Time
-                    </label>
-                    <select
-                      name={`tokenSets.${index}.drawTime`}
-                      value={tokenSet.drawTime}
-                      onChange={formik.handleChange}
-                      onBlur={formik.handleBlur}
-                      className={`rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary w-2/3 ${
-                        formik.touched.tokenSets?.[index]?.drawTime &&
-                        formik.errors.tokenSets?.[index]?.drawTime
-                          ? 'border-red-500'
-                          : ''
-                      }`}
-                    >
-                      {drawTimeList.map((drawTime) => (
-                        <option key={drawTime._id} value={drawTime.drawTime}>
-                          {drawTime.drawTime}
-                        </option>
-                      ))}
-                    </select>
-                    {formik.touched.tokenSets?.[index]?.drawTime &&
-                    formik.errors.tokenSets?.[index]?.drawTime ? (
-                      <div className="text-red-500">
-                        {formik.errors.tokenSets[index].drawTime}
-                      </div>
-                    ) : null}
-                  </div>
-
-                  <div>
-                    <label className="mb-3 block text-black dark:text-white">
-                      Select date
-                    </label>
-                    <DatePicker
-                      selected={tokenSet.date}
-                      onChange={(date) =>
-                        formik.setFieldValue(`tokenSets.${index}.date`, date)
-                      }
-                      className={`rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary w-2/3 ${
-                        formik.touched.tokenSets?.[index]?.date &&
-                        formik.errors.tokenSets?.[index]?.date
-                          ? 'border-red-500'
-                          : ''
-                      }`}
-                    />
-                    {formik.touched.tokenSets?.[index]?.date &&
-                    formik.errors.tokenSets?.[index]?.date ? (
-                      <div className="text-red-500">
-                        {formik.errors.tokenSets[index].date}
-                      </div>
-                    ) : null}
-                  </div>
-
                   {index > 0 && (
                     <button
                       type="button"
@@ -265,7 +272,7 @@ const EntityForm: React.FC = () => {
                           formik.values.tokenSets.filter((_, i) => i !== index),
                         );
                       }}
-                      className="mt-2 text-red-600"
+                      className="w-50 m-2 flex justify-center rounded bg-meta-1 p-3 font-medium text-gray mb-2"
                     >
                       Remove
                     </button>
@@ -273,7 +280,7 @@ const EntityForm: React.FC = () => {
                 </div>
               ))}
 
-              <div className="flex justify-center">
+              <div className="flex ml-6 mb-6">
                 <button
                   type="button"
                   onClick={() => {
@@ -282,8 +289,6 @@ const EntityForm: React.FC = () => {
                       {
                         tokenNumber: '',
                         count: '',
-                        drawTime: defaultDrawTime,
-                        date: new Date(),
                       },
                     ]);
                   }}
