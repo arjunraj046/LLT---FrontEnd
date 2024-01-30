@@ -4,7 +4,8 @@ import Loader from '../common/Loader';
 // import routes from './admin';
 // import adminRoutes from './admin';
 import agentRouteSet from './agent';
-import EntityForm from '../pages/Form/EntityForm';
+// import EntityForm from '../pages/Form/EntityForm';
+import EntityForm from '../pages/Form/fff';
 // import DashboardAgent from '../pages/Agent/AgentDashboard';
 
 const DefaultLayout = lazy(() => import('../layout/DefaultLayout'));

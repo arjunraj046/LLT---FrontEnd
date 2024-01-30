@@ -6,6 +6,7 @@ import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm } from 'react-hook-form';
 import { showAlert } from '../../components/tosterComponents/tost';
+import { backend_Url } from '../../api/server';
 
 interface FormValues {
   startRange: number | null;
@@ -56,7 +57,7 @@ const SettingsForm = () => {
 
     try {
       const response = await axios.post(
-        '/api/admin/enitity-rang',
+        `${backend_Url}/api/admin/enitity-rang`,
         userWithColor,
       );
       console.log('User registered:', response.data);

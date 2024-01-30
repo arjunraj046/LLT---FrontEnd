@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMagnifyingGlass, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { showAlert } from '../components/tosterComponents/tost';
+import { backend_Url } from '../api/server';
 
 interface Range {
   _id: string;
@@ -23,7 +24,7 @@ const EntryDrawSettings: React.FC = () => {
         console.log('axios is calling');
 
         const response = await axios.get<any>(
-          '/api/admin/enitity-draw-time-rang-list',
+          `${backend_Url}/api/admin/enitity-draw-time-rang-list`,
         );
         if (response.data.status === 'success') {
             setDrawTimeList(response.data.drawTimeList);
@@ -57,7 +58,7 @@ const EntryDrawSettings: React.FC = () => {
     if (window.confirm('Are you sure you want to delete?')) {
       try {
         const response = await axios.post(
-          '/api/admin/delete-draw-time',
+          `${backend_Url}/api/admin/delete-draw-time`,
           { id },
         );
 

@@ -4,11 +4,19 @@ import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { Link, useNavigate } from 'react-router-dom';
 import { showAlert } from '../../components/tosterComponents/tost';
+import { backend_Url } from '../../api/server';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faPlus } from '@fortawesome/free-solid-svg-icons';
 
 interface DrawTime {
   _id: string;
   drawTime: string;
 }
+
+interface value {
+  
+}
+
 
 const EntityForm: React.FC = () => {
   const [drawTimeList, setDrawTimeList] = useState<DrawTime[]>([]);
@@ -18,6 +26,8 @@ const EntityForm: React.FC = () => {
   const [drawTime, setDrawTime] = useState<string>('');
   const navigate = useNavigate();
   const [defaultDrawTime, setDefaultDrawTime] = useState<string>('');
+  const [fieldCount, setFieldCount] = useState(1);
+  const [value,setValue]=useState()
 
   // const timeProbability = () => {
   //   const now = new Date();
@@ -28,7 +38,7 @@ const EntityForm: React.FC = () => {
   //     const [hoursStr, minutesStr] = timeString.split(':');
   //     const hours = parseInt(hoursStr, 10);
   //     const minutes = parseInt(minutesStr, 10);
-    
+
   //     return { hours, minutes };
   //   }
 
@@ -58,7 +68,7 @@ const EntityForm: React.FC = () => {
     const fetchDrawTimeList = async () => {
       try {
         const response = await axios.get<any>(
-          '/api/admin/enitity-draw-time-rang-list'
+          `${backend_Url}/api/admin/enitity-draw-time-rang-list`,
         );
         if (response.data.status === 'success') {
           setDrawTimeList(response.data.drawTimeList);
@@ -67,7 +77,8 @@ const EntityForm: React.FC = () => {
           if (response.data.drawTimeList.length > 0) {
             // Get the current time
             const currentTime = new Date();
-            const currentMinutes = currentTime.getHours() * 60 + currentTime.getMinutes();
+            const currentMinutes =
+              currentTime.getHours() * 60 + currentTime.getMinutes();
 
             // Find the closest draw time
             let closestDrawTime: DrawTime | null = null;
@@ -76,12 +87,17 @@ const EntityForm: React.FC = () => {
             response.data.drawTimeList.forEach((drawTime: DrawTime) => {
               // Type guard to ensure 'drawTime' property exists
               if (typeof drawTime.drawTime === 'string') {
-                const drawTimeDate = new Date(`2000-01-01T${drawTime.drawTime}`);
-                const drawTimeMinutes = drawTimeDate.getHours() * 60 + drawTimeDate.getMinutes();
+                const drawTimeDate = new Date(
+                  `2000-01-01T${drawTime.drawTime}`,
+                );
+                const drawTimeMinutes =
+                  drawTimeDate.getHours() * 60 + drawTimeDate.getMinutes();
 
                 // Adjust the condition to consider only future draw times
                 if (drawTimeMinutes >= currentMinutes) {
-                  const timeDifference = Math.abs(drawTimeMinutes - currentMinutes);
+                  const timeDifference = Math.abs(
+                    drawTimeMinutes - currentMinutes,
+                  );
 
                   if (timeDifference < minTimeDifference) {
                     closestDrawTime = drawTime;
@@ -97,7 +113,10 @@ const EntityForm: React.FC = () => {
             }
           }
         } else {
-          console.error('API request failed with status:', response.data.status);
+          console.error(
+            'API request failed with status:',
+            response.data.status,
+          );
         }
       } catch (error) {
         console.error('Error fetching draw time list:', error);
@@ -124,7 +143,7 @@ const EntityForm: React.FC = () => {
 
     try {
       const formattedDate = date?.toISOString().split('T')[0];
-      const response = await axios.post('/api/agent/add-entity', {
+      const response = await axios.post(`${backend_Url}/api/agent/add-entity`, {
         _id: _id,
         date: formattedDate,
         tokenNumber,
@@ -153,6 +172,7 @@ const EntityForm: React.FC = () => {
               </div>
 
               <div className="flex flex-col gap-5.5 p-6.5">
+                <h2>Token 1</h2>
                 <div>
                   <label className="mb-3 block text-black dark:text-white">
                     Token Number
@@ -186,7 +206,7 @@ const EntityForm: React.FC = () => {
                   </label>
                   <select
                     name="drawTime"
-                    value={drawTime || defaultDrawTime} // Use drawTime or defaultDrawTime as the value
+                    value={drawTime || defaultDrawTime}
                     onChange={handleDrawTimeChange}
                     className="rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary w-50"
                   >
@@ -208,18 +228,29 @@ const EntityForm: React.FC = () => {
                     className="rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary w-50"
                   />
                 </div>
+                <div>
+                  <button
+                    type="button"
+                    className="w-50  flex justify-center rounded bg-black p-3 font-medium text-gray  mb-2"
+                  >
+                    <span className="mr-2">
+                      <FontAwesomeIcon icon={faPlus} />
+                    </span>
+                    Add Another Token
+                  </button>
+                </div>
               </div>
 
-              <div className="flex justify-center mb-10">
+              <div className="flex justify-center mb-10 ">
                 <button
                   type="submit"
-                  className="flex justify-center rounded bg-primary p-3 font-medium text-gray ml-5"
+                  className=" w-24 flex justify-center rounded bg-primary p-3 font-medium text-gray ml-5 "
                 >
                   Save
                 </button>
                 <Link
                   to="/"
-                  className="flex justify-center rounded bg-primary p-3 font-medium text-gray ml-3"
+                  className=" w-24 flex justify-center rounded bg-primary p-3 font-medium text-gray ml-3"
                 >
                   Cancel
                 </Link>

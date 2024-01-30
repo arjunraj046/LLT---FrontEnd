@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
+import { backend_Url } from '../api/server';
 import {
   faUnlockKeyhole,
   faUser,
   faUserPlus,
-  faEdit,faMagnifyingGlass, faTrash
+  faEdit,
+  faMagnifyingGlass,
+  faTrash,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { showAlert } from '../components/tosterComponents/tost';
@@ -26,7 +29,7 @@ const UserList: React.FC = () => {
     const fetchUserDetails = async () => {
       try {
         const response = await axios.get<any>(
-          '/api/admin/agent-list/',
+          `${backend_Url}/api/admin/agent-list/`,
         );
         setPeople(response.data?.agentList);
       } catch (error) {
@@ -36,12 +39,12 @@ const UserList: React.FC = () => {
 
     fetchUserDetails();
   }, []);
-  
+
   const deleteEntry = async (id: string) => {
     if (window.confirm('Are you sure you want to delete?')) {
       try {
         const response = await axios.post(
-          '/api/admin/delete-user',
+          `${backend_Url}/api/admin/delete-user`,
           { id },
         );
 
@@ -54,7 +57,6 @@ const UserList: React.FC = () => {
       }
     }
   };
-  
 
   return (
     <div className="rounded-sm border border-stroke bg-white px-5 pt-6 pb-2.5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:pb-1">
@@ -67,7 +69,7 @@ const UserList: React.FC = () => {
       </div>
       <div className="flex flex-col">
         <div className="grid grid-cols-5 rounded-sm bg-black dark:bg-meta-4 sm:grid-cols-8">
-        <div className=" p-2.5 text-center sm:block xl:p-5">
+          <div className=" p-2.5 text-center sm:block xl:p-5">
             <h5 className="text-sm font-medium uppercase  xsm:text-base ">
               Sl No
             </h5>
@@ -114,13 +116,13 @@ const UserList: React.FC = () => {
           </div> */}
         </div>
 
-        {people.map((person,index) => (
+        {people.map((person, index) => (
           <div
             key={person._id}
             className="grid grid-cols-5 border-b border-stroke dark:border-strokedark sm:grid-cols-8"
           >
-             <div className="items-center justify p-2.5 xl:p-5">
-              <p className="text-black dark:text-white">{index+1}</p>
+            <div className="items-center justify p-2.5 xl:p-5">
+              <p className="text-black dark:text-white">{index + 1}</p>
             </div>
             <div className=" hidden w-auto items-center justify-center p-2.5 sm:flex xl:p-5">
               {/* <div className="flex-shrink-0">
@@ -154,28 +156,26 @@ const UserList: React.FC = () => {
               </p>
             </div>
             <div className=" flex items-center justify-center p-2.5 sm:flex xl:p-5">
-              <button >
+              <button>
                 <Link to={`/admin/editprofile/${person._id}`}>
-                  <FontAwesomeIcon icon={faEdit} /> 
+                  <FontAwesomeIcon icon={faEdit} />
                 </Link>
               </button>
             </div>
             <div className="hidden items-center justify-center p-2.5 sm:flex xl:p-5">
-              <button >
+              <button>
                 <Link to={`/admin/changepassword/${person._id}`}>
                   <FontAwesomeIcon icon={faUnlockKeyhole} />
                 </Link>
               </button>
             </div>
             <div className="flex items-center justify-center  p-2.5 sm:flex xl:p-5">
-                      <p className="text-grey">
-                      <button
-              onClick={() => deleteEntry(person._id)}
-               >
-                          <FontAwesomeIcon icon={faTrash} />
-                        </button>
-                      </p>
-                    </div>
+              <p className="text-grey">
+                <button onClick={() => deleteEntry(person._id)}>
+                  <FontAwesomeIcon icon={faTrash} />
+                </button>
+              </p>
+            </div>
 
             {/* <div className="hidden items-center justify-center p-2.5 sm:flex xl:p-5">
               <p className="text-meta-5">
