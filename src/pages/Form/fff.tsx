@@ -3,7 +3,6 @@ import React, { useState, useEffect } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { Link, useNavigate } from 'react-router-dom';
-import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { showAlert } from '../../components/tosterComponents/tost';
 import { backend_Url } from '../../api/server';
@@ -24,6 +23,10 @@ const EntityForm: React.FC = () => {
   const [drawTimeList, setDrawTimeList] = useState<DrawTime[]>([]);
   const [defaultDrawTime, setDefaultDrawTime] = useState<string>('');
   const [drawTime, setDrawTime] = useState<string>('none');
+  const [date, setDate] = useState<Date>(new Date());
+  const [tokenSets, setTokenSets] = useState<TokenSet[]>([
+    { tokenNumber: '', count: '' },
+  ]);
 
   const navigate = useNavigate();
 
@@ -84,79 +87,47 @@ const EntityForm: React.FC = () => {
     fetchDrawTimeList();
   }, []);
 
-  const formik = useFormik({
-    initialValues: {
-      drawTime: drawTime,
-      date: new Date(),
-      tokenSets: [{ tokenNumber: '', count: '' }],
-    },
-    validationSchema: Yup.object().shape({
-      drawTime: Yup.string(),
-      // .required('Draw Time is required'),
-      date: Yup.date().required('Select a date'),
-      tokenSets: Yup.array().of(
-        Yup.object().shape({
-          tokenNumber: Yup.string()
-            .required('Token Number is required')
-            .matches(/^\d+$/, 'Token Number must be a number')
-            .min(1, 'Token Number must be at least 1 digit')
-            .max(2, 'Token Number cannot be more than 2 digits'),
-          count: Yup.string()
-            .required('Token Count is required')
-            .max(1000, 'Token Count cannot be more than 1000')
-            .matches(
-              /^[1-9]\d*$/,
-              'Token Count must be a number greater than 0',
-            ),
-        }),
-      ),
-    }),
-    onSubmit: async (values) => {
-      console.log('values', values);
+  const handleSubmit = async () => {
+    console.log('values', { drawTime, date, tokenSets });
 
-      const _id = localStorage.getItem('agentID');
-      console.log('11111', values.drawTime, values.drawTime.length == 0);
-      console.log('22222', drawTime, values.drawTime, defaultDrawTime);
-      let ddtime;
-      if (values.drawTime.length > 0) {
-        ddtime = values.drawTime;
-      } else {
-        ddtime = drawTime;
-      }
-      console.log('3333', ddtime);
+    const _id = localStorage.getItem('agentID');
+    let ddtime;
+    if (drawTime.length > 0) {
+      ddtime = drawTime;
+    } else {
+      ddtime = defaultDrawTime;
+    }
 
-      try {
-        console.log(ddtime);
+    try {
+      const response = await axios.post(`${backend_Url}/api/agent/add-entity`, {
+        _id: _id,
+        drawTime: ddtime,
+        date: date.toISOString().split('T')[0],
+        tokenSets: tokenSets.map((tokenSet) => ({
+          tokenNumber: tokenSet.tokenNumber,
+          count: tokenSet.count,
+        })),
+      });
 
-        const response = await axios.post(
-          `${backend_Url}/api/agent/add-entity`,
-          {
-            _id: _id,
-
-            drawTime: ddtime,
-            date: values.date.toISOString().split('T')[0],
-            tokenSets: values.tokenSets.map((tokenSet) => ({
-              tokenNumber: tokenSet.tokenNumber,
-              count: tokenSet.count,
-            })),
-          },
-        );
-
-        console.log('Entry Added', response.data);
-        navigate('/');
-      } catch (error: any) {
-        console.error('Error adding entry:', error);
-        showAlert(error?.response?.data?.error, 'error');
-      }
-    },
-  });
+      console.log('Entry Added', response.data);
+      navigate('/');
+    } catch (error: any) {
+      console.error('Error adding entry:', error);
+      showAlert(error?.response?.data?.error, 'error');
+    }
+  };
 
   return (
     <>
       <div className="grid grid-cols-1 gap-9 ">
         <div className="flex flex-col gap-9 ">
           <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
-            <form onSubmit={formik.handleSubmit}>
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                handleSubmit();
+              }}
+            >
               <div className="border-b border-stroke py-4 px-6.5 dark:border-strokedark">
                 <h3 className="font-medium text-black dark:text-white">
                   Add Token
@@ -169,14 +140,9 @@ const EntityForm: React.FC = () => {
                   </label>
                   <select
                     name="drawTime"
-                    value={formik.values.drawTime || drawTime}
-                    onChange={formik.handleChange}
-                    onBlur={formik.handleBlur}
-                    className={`rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary w-2/3 ${
-                      formik.touched.drawTime && formik.errors.drawTime
-                        ? 'border-red-500'
-                        : ''
-                    }`}
+                    value={drawTime || defaultDrawTime}
+                    onChange={(e) => setDrawTime(e.target.value)}
+                    className={`rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary w-2/3`}
                   >
                     {drawTimeList.map((drawTime) => (
                       <option key={drawTime._id} value={drawTime.drawTime}>
@@ -184,9 +150,6 @@ const EntityForm: React.FC = () => {
                       </option>
                     ))}
                   </select>
-                  {formik.touched.drawTime && formik.errors.drawTime ? (
-                    <div className="text-red-500">{formik.errors.drawTime}</div>
-                  ) : null}
                 </div>
 
                 <div>
@@ -194,21 +157,14 @@ const EntityForm: React.FC = () => {
                     Select date
                   </label>
                   <DatePicker
-                    selected={formik.values.date}
-                    onChange={(date) => formik.setFieldValue('date', date)}
-                    className={`rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary w-2/3 ${
-                      formik.touched.date && formik.errors.date
-                        ? 'border-red-500'
-                        : ''
-                    }`}
+                    selected={date}
+                    onChange={(date) => setDate(date as Date)}
+                    className={`rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary w-2/3`}
                   />
-                  {formik.touched.date && formik.errors.date ? (
-                    <div className="text-red-500">{formik.errors.date}</div>
-                  ) : null}
                 </div>
               </div>
 
-              {formik.values.tokenSets.map((tokenSet, index) => (
+              {tokenSets.map((tokenSet, index) => (
                 <div key={index} className="flex flex-col gap-5.5 p-6.5">
                   <h2>Token {index + 1}</h2>
                   <div>
@@ -220,21 +176,13 @@ const EntityForm: React.FC = () => {
                       name={`tokenSets.${index}.tokenNumber`}
                       value={tokenSet.tokenNumber}
                       placeholder="Token Number"
-                      onChange={formik.handleChange}
-                      onBlur={formik.handleBlur}
-                      className={`rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary w-2/3 ${
-                        formik.touched.tokenSets?.[index]?.tokenNumber &&
-                        formik.errors.tokenSets?.[index]?.tokenNumber
-                          ? 'border-red-500'
-                          : ''
-                      }`}
+                      onChange={(e) => {
+                        const newTokenSets = [...tokenSets];
+                        newTokenSets[index].tokenNumber = e.target.value;
+                        setTokenSets(newTokenSets);
+                      }}
+                      className={`rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary w-2/3`}
                     />
-                    {formik.touched.tokenSets?.[index]?.tokenNumber &&
-                    formik.errors.tokenSets?.[index]?.tokenNumber ? (
-                      <div className="text-red-500">
-                        {formik.errors.tokenSets[index].tokenNumber}
-                      </div>
-                    ) : null}
                   </div>
 
                   <div>
@@ -246,30 +194,21 @@ const EntityForm: React.FC = () => {
                       name={`tokenSets.${index}.count`}
                       placeholder="Token Count"
                       value={tokenSet.count}
-                      onChange={formik.handleChange}
-                      onBlur={formik.handleBlur}
-                      className={`rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary w-2/3 ${
-                        formik.touched.tokenSets?.[index]?.count &&
-                        formik.errors.tokenSets?.[index]?.count
-                          ? 'border-red-500'
-                          : ''
-                      }`}
+                      onChange={(e) => {
+                        const newTokenSets = [...tokenSets];
+                        newTokenSets[index].count = e.target.value;
+                        setTokenSets(newTokenSets);
+                      }}
+                      className={`rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary w-2/3`}
                     />
-                    {formik.touched.tokenSets?.[index]?.count &&
-                    formik.errors.tokenSets?.[index]?.count ? (
-                      <div className="text-red-500">
-                        {formik.errors.tokenSets[index].count}
-                      </div>
-                    ) : null}
                   </div>
 
                   {index > 0 && (
                     <button
                       type="button"
                       onClick={() => {
-                        formik.setFieldValue(
-                          'tokenSets',
-                          formik.values.tokenSets.filter((_, i) => i !== index),
+                        setTokenSets((prevTokenSets) =>
+                          prevTokenSets.filter((_, i) => i !== index),
                         );
                       }}
                       className="w-50 m-2 flex justify-center rounded bg-meta-1 p-3 font-medium text-gray mb-2"
@@ -284,12 +223,9 @@ const EntityForm: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => {
-                    formik.setFieldValue('tokenSets', [
-                      ...formik.values.tokenSets,
-                      {
-                        tokenNumber: '',
-                        count: '',
-                      },
+                    setTokenSets((prevTokenSets) => [
+                      ...prevTokenSets,
+                      { tokenNumber: '', count: '' },
                     ]);
                   }}
                   className="w-50 m-2 flex justify-center rounded bg-black p-3 font-medium text-gray mb-2"
