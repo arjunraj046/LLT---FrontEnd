@@ -9,7 +9,11 @@ import EntityForm from '../pages/Form/fff';
 // import DashboardAgent from '../pages/Agent/AgentDashboard';
 
 const DefaultLayout = lazy(() => import('../layout/DefaultLayout'));
-const DashboardAgent = lazy(() => import('../pages/Agent/AgentDashboard'));
+
+
+
+const Agent = lazy(() => import('../pages/Agent/Agent'));
+const OrderTokens = lazy(() => import('../components/OrderTokens'));
 
 function AgentRoute() {
   // const [loading, setLoading] = useState<boolean>(true);
@@ -27,8 +31,10 @@ function AgentRoute() {
       <Suspense fallback={<Loader />}>
         <Routes>
           <Route element={<DefaultLayout />}>
-            <Route index element={<DashboardAgent />} />
+            <Route index element={<Agent />} />
+            <Route path='/listTokens' element={<OrderTokens/>} />
             <Route path='/addtoken' element={<EntityForm />} />
+            
 
             {/* 
             {agentRouteSet.map(({ path, component: Component }, index) => (

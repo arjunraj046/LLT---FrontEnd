@@ -1,33 +1,17 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { Link } from 'react-router-dom';
 import axios from 'axios';
 import * as Yup from 'yup';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faTrash,faEye } from '@fortawesome/free-solid-svg-icons';
 import { showAlert } from '../components/tosterComponents/tost';
-import DataTable, { Column } from 'react-data-table-component';
 import { backend_Url } from '../../src/api/server';
-// import DataTableExtensions from 'react-data-table-component-extensions';
-// import 'react-data-table-component-extensions/dist/index.css';
-// import Pagination from 'react-data-table-component-extensions';
+import DataTable,{Column} from 'react-data-table-component';
 
 interface Person {
   drawTime: string;
   _id: string;
   name: string;
-  username: string;
-  colour: string;
-  tokenCount: string;
-  tokenNumber: string;
-  email: string;
-  contactNumber: string;
-  date: string;
-}
-
-interface Range {
-  _id: string;
-  startRange: number;
-  endRange: number;
-  color: string;
   date: string;
 }
 
@@ -37,21 +21,14 @@ interface DrawTime {
 }
 
 const validationSchema = Yup.object().shape({
-  searchTerm: Yup.string().matches(
-    /^[0-9]+$/,
-    'Search term must contain only numbers',
-  ),
   dateFilter: Yup.string(),
 });
 
-const EntityList: React.FC = () => {
+const OrderList: React.FC = () => {
   const [people, setPeople] = useState<Person[]>([]);
-  const [rangeList, setRangeList] = useState<Range[]>([]);
-  const [totalCount, setTotalCount] = useState<number>(0);
   const [reFetch, setReFetch] = useState<boolean>(false);
   const [noRecordsFound, setNoRecordsFound] = useState<boolean>(false);
   const [dateFilter, setDateFilter] = useState<string>(getInitialDate());
-  const [searchTerm, setSearchTerm] = useState<string>('');
   const [drawTimeList, setDrawTimeList] = useState<DrawTime[]>([]);
   const [drawTime, setDrawTime] = useState<string>('');
 
@@ -64,37 +41,29 @@ const EntityList: React.FC = () => {
 
   const fetchData = async (params?: {
     dateFilter?: string;
-    tokenNumber?: string;
     drawTime?: string;
   }) => {
     try {
-      const responsePeople = await axios.get(`${backend_Url}/api/admin/search-list-entity`, { params: params || {} });
-      const responseRange = await axios.get<any>(`${backend_Url}/api/admin/enitity-rang-list`);
+      const responsePeople = await axios.get(`${backend_Url}/api/admin/search-list-order`, { params: params || {} });
       const drawTimeRange = await axios.get<any>(`${backend_Url}/api/admin/enitity-draw-time-rang-list`);
 
-      if (responsePeople.data.status === 'success' && responseRange.data.status === 'success' && drawTimeRange.data.status === 'success') {
+      if (responsePeople.data.status === 'success' && drawTimeRange.data.status === 'success') {
         const peopleList = responsePeople.data.list || [];
-        const rangeListData = responseRange.data.rangeList || [];
-        const totalCountData = responsePeople.data.totalCount || 0;
+      
         const drawTimeListData = drawTimeRange.data.drawTimeList || [];
 
         if (isInitialRender.current) {
           setPeople(peopleList);
-          setRangeList(rangeListData);
-          setTotalCount(totalCountData);
           setDrawTimeList(drawTimeListData);
           isInitialRender.current = false;
         } else {
           setPeople(peopleList);
-          setRangeList(rangeListData);
-          setTotalCount(totalCountData);
           setDrawTimeList(drawTimeListData);
         }
       } else {
         console.error(
           'API request failed with status:',
           responsePeople.data.status,
-          responseRange.data.status,
           drawTimeRange.data.status,
         );
         setNoRecordsFound(true);
@@ -113,9 +82,9 @@ const EntityList: React.FC = () => {
 
   useEffect(() => {
     if (!isInitialRender.current) {
-      fetchData({ dateFilter, tokenNumber: searchTerm, drawTime });
+      fetchData({ dateFilter, drawTime });
     }
-  }, [dateFilter, searchTerm, drawTime, reFetch]);
+  }, [dateFilter, drawTime, reFetch]);
 
   const formatDate = (isoDateString: string) => {
     const dateObject = new Date(isoDateString);
@@ -144,13 +113,28 @@ const EntityList: React.FC = () => {
     }
   };
 
-  const columns: Column<Person>[] = [
-    { name: 'Sl No', selector: (row: { index: any; }) => row.index, sortable: true },
-    { name: 'User', selector: (row: { username: any; }) => row.username, sortable: true },
-    { name: 'Token', selector: (row: { tokenNumber: any; }) => row.tokenNumber, sortable: true },
-    { name: 'Count', selector: (row: { tokenCount: any; }) => row.tokenCount, sortable: true },
-    { name: 'Date', selector: (row: { date: string; }) => formatDate(row.date), sortable: true },
-    { name: 'Time', selector: (row: { drawTime: any; }) => row.drawTime, sortable: true },
+  const columns:Column<any>[]=[
+    {
+        name: 'Sl No',
+        selector: (row: { index: any }) => row.index,
+        sortable: true,
+        
+      },
+    {
+        name: 'User',
+        selector: (row: { name: any }) => row.name,
+        sortable: true,
+      },
+    {
+        name: 'Date',
+        selector: (row: { formattedDate: any }) => row.formattedDate,
+        sortable: true,
+      },
+    {
+        name: 'Time',
+        selector: (row: { drawTime: any }) => row.drawTime,
+        sortable: true,
+      },
     {
       name: 'Action',
       cell: (row: { _id: string; }) => (
@@ -158,25 +142,37 @@ const EntityList: React.FC = () => {
           <button onClick={() => deleteEntry(row._id)}>
             <FontAwesomeIcon icon={faTrash} />
           </button>
+          <Link to={`/listTokens/${row._id}`}>
+            <FontAwesomeIcon icon={faEye} />
+          </Link>
         </div>
       ),
     },
   ];
+//   const customStyles = {
+//     headRow: {
+//       style: {
+//         backgroundColor: '#909090', 
+//       },
+//     },
+//     headCells: {
+//       style: {
+//         fontSize: '16px',
+//         // borderRadius: '8px', // Equivalent to rounded-lg
+//         // border: '1.5px solid #303030', // Replace 'yourBorderColor' with the desired border color
+//         // backgroundColor: 'transparent',
+//       },
+//     },
+//   };
 
   const data = people.map((person, index) => ({
     index: index + 1,
-    username: person.username,
-    tokenNumber: person.tokenNumber,
-    tokenCount: person.tokenCount,
-    date: person.date,
+    name: 'Shameer', 
+    formattedDate: formatDate(person.date),
     drawTime: person.drawTime,
     _id: person._id,
   }));
 
-  const tableData = {
-    columns,
-    data,
-  };
 
   return (
     <div className="container mx-auto mt-8">
@@ -193,21 +189,11 @@ const EntityList: React.FC = () => {
           </div>
 
           <div className="mb-5 md:mr-5">
-            <input
-              type="number"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              placeholder="Enter token number"
-              className="rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary w-full md:w-50"
-            />
-          </div>
-
-          <div className="mb-5 md:mr-5">
             <select
               name="drawTime"
               value={drawTime}
               onChange={(e) => setDrawTime(e.target.value)}
-              className="rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary w-full md:w-50"
+              className="rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark pb-4 dark:bg-form-input dark:focus:border-primary w-full md:w-50"
             >
               <option value="" disabled>
                 Select Draw Time
@@ -221,22 +207,20 @@ const EntityList: React.FC = () => {
             </select>
           </div>
         </div>
-
         <div className="flex flex-col mt-10">
-          {/* <DataTableExtensions {...tableData}> */}
-            <DataTable
-              columns={columns}
-              data={data}
-              pagination
-              highlightOnHover
-              responsive
-              // paginationComponent={Pagination}
-            />
-          {/* </DataTableExtensions> */}
+          <DataTable
+            columns={columns}
+            data={data}
+            pagination
+            highlightOnHover
+            responsive
+            // customStyles={customStyles}
+          />
         </div>
       </div>
     </div>
   );
 };
+     
 
-export default EntityList;
+export default OrderList;

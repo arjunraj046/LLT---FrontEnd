@@ -52,6 +52,7 @@ const coreRoutes = [
     title: 'AddRange',
     component: DrawTimeSettingsForm,
   },
+ 
 ];
 
 const adminRouteSet = [...coreRoutes];
