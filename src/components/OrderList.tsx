@@ -13,7 +13,7 @@ interface Person {
   token: any;
   drawTime: string;
   _id: string;
-  userFullName: string;
+  username: string;
   date: string;
   
 }
@@ -193,7 +193,7 @@ const OrderList: React.FC = () => {
 
   const data = people.map((person, index) => ({
     index: index + 1,
-    name: person.userFullName,
+    name: person.username,
     formattedDate: formatDate(person.date),
     drawTime: person.drawTime,
     _id: person._id,
