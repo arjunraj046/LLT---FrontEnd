@@ -19,6 +19,27 @@ interface TokenSet {
   count: string;
 }
 
+const validationSchema = Yup.object().shape({
+  drawTime: Yup.string().required('Draw Time is required'),
+  date: Yup.date().required('Date is required'),
+  tokenSets: Yup.array().of(
+    Yup.object().shape({
+      tokenNumber: Yup.string()
+        .required('Token Number is required')
+        .matches(
+          /^[1-9]{1,2}$/,
+          'Token Number must be a number between 1 and 99',
+        ),
+      count: Yup.string()
+        .required('Token Count is required')
+        .matches(
+          /^[1-9][0-9]{0,2}$/,
+          'Token Count must be a number between 1 and 1000',
+        ),
+    }),
+  ),
+});
+
 const EntityForm: React.FC = () => {
   const [drawTimeList, setDrawTimeList] = useState<DrawTime[]>([]);
   const [defaultDrawTime, setDefaultDrawTime] = useState<string>('');
@@ -28,6 +49,7 @@ const EntityForm: React.FC = () => {
     { tokenNumber: '', count: '' },
   ]);
 
+  const [errors, setErrors] = useState<any>({});
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -88,17 +110,20 @@ const EntityForm: React.FC = () => {
   }, []);
 
   const handleSubmit = async () => {
-    console.log('values', { drawTime, date, tokenSets });
-
-    const _id = localStorage.getItem('agentID');
-    let ddtime;
-    if (drawTime.length > 0) {
-      ddtime = drawTime;
-    } else {
-      ddtime = defaultDrawTime;
-    }
-
     try {
+      await validationSchema.validate(
+        { drawTime, date, tokenSets },
+        { abortEarly: false },
+      );
+
+      const _id = localStorage.getItem('agentID');
+      let ddtime;
+      if (drawTime.length > 0) {
+        ddtime = drawTime;
+      } else {
+        ddtime = defaultDrawTime;
+      }
+
       const response = await axios.post(`${backend_Url}/api/agent/add-entity`, {
         _id: _id,
         drawTime: ddtime,
@@ -112,8 +137,23 @@ const EntityForm: React.FC = () => {
       console.log('Entry Added', response.data);
       navigate('/');
     } catch (error: any) {
-      console.error('Error adding entry:', error);
-      showAlert(error?.response?.data?.error, 'error');
+      if (error instanceof Yup.ValidationError) {
+        const validationErrors: Record<string, string> = {};
+        error.inner.forEach((err) => {
+          validationErrors[err.path as string] = err.message;
+        });
+        setErrors(validationErrors);
+        console.log(validationErrors);
+
+        // showAlert('Please correct the form errors before submitting.', 'error');
+        for (const fieldName in validationErrors) {
+          // console.error(`${fieldName}: ${validationErrors[fieldName]}`);
+          showAlert(` ${validationErrors[fieldName]}`, 'error');
+        }
+      } else {
+        console.error('Error submitting form:', error);
+        showAlert('An error occurred while submitting the form.', 'error');
+      }
     }
   };
 
@@ -150,6 +190,9 @@ const EntityForm: React.FC = () => {
                       </option>
                     ))}
                   </select>
+                  {errors.drawTime && (
+                    <div className="text-meta-1">{errors.drawTime}</div>
+                  )}
                 </div>
 
                 <div>
@@ -161,12 +204,16 @@ const EntityForm: React.FC = () => {
                     onChange={(date) => setDate(date as Date)}
                     className={`rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary w-2/3`}
                   />
+                  {errors.date && (
+                    <div className="text-meta-1">{errors.date}</div>
+                  )}
                 </div>
               </div>
 
               {tokenSets.map((tokenSet, index) => (
                 <div key={index} className="flex flex-col gap-5.5 p-6.5">
                   <h2>Token {index + 1}</h2>
+
                   <div>
                     <label className="mb-3 block text-black dark:text-white">
                       Token Number
