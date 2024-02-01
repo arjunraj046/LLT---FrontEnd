@@ -13,8 +13,9 @@ interface Person {
   token: any;
   drawTime: string;
   _id: string;
-  name: string;
+  userFullName: string;
   date: string;
+  
 }
 
 interface DrawTime {
@@ -192,7 +193,7 @@ const OrderList: React.FC = () => {
 
   const data = people.map((person, index) => ({
     index: index + 1,
-    name: 'Shameer',
+    name: person.userFullName,
     formattedDate: formatDate(person.date),
     drawTime: person.drawTime,
     _id: person._id,
