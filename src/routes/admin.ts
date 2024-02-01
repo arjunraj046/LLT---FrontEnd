@@ -10,6 +10,7 @@ const Settings = lazy(() => import('../pages/Settings'));
 const Users = lazy(() => import('../pages/Users'));
 const EditAgentProfile= lazy(() => import('../pages/editProfile'));
 const EditAgentPassword = lazy(() => import('../pages/editpassword')); 
+const OrderTokens = lazy(() => import('../components/OrderTokens')); 
 
 const coreRoutes = [
   {
@@ -51,6 +52,11 @@ const coreRoutes = [
     path: '/addDrawTime',
     title: 'AddRange',
     component: DrawTimeSettingsForm,
+  },
+  {
+    path: '/listTokens',
+    title: 'listTokens',
+    component: OrderTokens,
   },
  
 ];

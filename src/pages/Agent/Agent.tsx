@@ -1,18 +1,16 @@
 import React, { useState } from 'react';
- import DashboardAgent from './AgentDashboard';
- import AgentOrderList from './AgentOrderList';
+import DashboardAgent from './AgentDashboard';
+import AgentOrderList from './AgentOrderList';
 // import EntityList from './EntityList';
 // import CumulativeEntries from './CumulativeEntries';
 // import OrderList from './OrderList';
 
 const Agent: React.FC = () => {
-    const [activeTab, setActiveTab] = useState<
-    'DashboardAgent' | 'AgentOrderList' 
-  >('DashboardAgent');
+  const [activeTab, setActiveTab] = useState<
+    'AgentOrderList' | 'DashboardAgent'
+  >('AgentOrderList');
 
-  const handleTabChange = (
-    tab: 'DashboardAgent' | 'AgentOrderList',
-  ) => {
+  const handleTabChange = (tab: 'AgentOrderList' | 'DashboardAgent') => {
     setActiveTab(tab);
   };
 
@@ -20,18 +18,6 @@ const Agent: React.FC = () => {
     <div>
       <div className="text-sm font-medium text-center text-gray-500 border-b border-gray-200 dark:text-gray-400 dark:border-gray-700">
         <ul className="flex flex-wrap -mb-px">
-          <li className="me-2">
-            <button
-              className={`inline-block p-4 ${
-                activeTab === 'DashboardAgent'
-                  ? 'border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300'
-                  : ''
-              }`}
-              onClick={() => handleTabChange('DashboardAgent')}
-            >
-              Tokens List
-            </button>
-          </li>
           <li className="me-2">
             <button
               className={`inline-block p-4 ${
@@ -44,13 +30,23 @@ const Agent: React.FC = () => {
               Order List
             </button>
           </li>
-        
+          <li className="me-2">
+            <button
+              className={`inline-block p-4 ${
+                activeTab === 'DashboardAgent'
+                  ? 'border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300'
+                  : ''
+              }`}
+              onClick={() => handleTabChange('DashboardAgent')}
+            >
+              Tokens List
+            </button>
+          </li>
         </ul>
       </div>
       <div>
-        {activeTab === 'DashboardAgent' && <DashboardAgent />}
         {activeTab === 'AgentOrderList' && <AgentOrderList />}
-       
+        {activeTab === 'DashboardAgent' && <DashboardAgent />}
       </div>
     </div>
   );
