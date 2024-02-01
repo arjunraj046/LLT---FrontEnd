@@ -96,6 +96,7 @@ const CumulativeEntries: React.FC = () => {
   return (
     <div className="container mx-auto mt-8">
       <div className="rounded-sm border border-stroke bg-white px-5 pt-6 pb-2.5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:pb-1">
+      <h2 className="text-2xl font-bold mb-4">Cumulative Tokens List</h2>
         <div className="flex flex-col md:flex-row">
           <div className="mb-5 md:mr-5">
             {/* Date Filter */}

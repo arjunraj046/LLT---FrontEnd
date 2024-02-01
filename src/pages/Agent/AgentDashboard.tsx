@@ -1,12 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTicket, faTrash, faPrint } from '@fortawesome/free-solid-svg-icons';
 import { useSelector } from 'react-redux';
 import { user } from '../../redux/reducer/userSlice';
-import { Link } from 'react-router-dom';
-import { showAlert } from '../../components/tosterComponents/tost';
-import jsPDF from 'jspdf';
 import DataTable, { Column } from 'react-data-table-component';
 import { backend_Url } from '../../api/server';
 
@@ -17,64 +12,7 @@ const DashboardAgent: React.FC = () => {
   const [list, setList] = useState<any[]>([]);
   const [reFetch, setReFetch] = useState<boolean>(false);
 
-  const [selectedPerson, setSelectedPerson] = useState<any | null>(null);
-
-  const handlePrint = (person: any) => {
-    setSelectedPerson(person);
-    generatePDF(person);
-  };
-
-  const generatePDF = (person: any) => {
-    const pdf = new jsPDF();
-
-    const formatDate = (dateString: string) => {
-      const options: Intl.DateTimeFormatOptions = {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-      };
-      return new Date(dateString).toLocaleDateString('en-US', options);
-    };
-
-    const formatTime = (timeString: string) => {
-      const options: Intl.DateTimeFormatOptions = {
-        hour: 'numeric',
-        minute: 'numeric',
-        hour12: true,
-      };
-      return new Date(`2000-01-01 ${timeString}`).toLocaleTimeString(
-        'en-US',
-        options,
-      );
-    };
-
-    // Add a clean border to the entire page
-    pdf.rect(
-      5,
-      5,
-      pdf.internal.pageSize.getWidth() - 10,
-      pdf.internal.pageSize.getHeight() - 10,
-    );
-
-    // Add a header
-    pdf.setFontSize(16);
-    pdf.text('Token Details', pdf.internal.pageSize.getWidth() / 2, 15, {
-      align: 'center',
-    });
-
-    // Reset font size for the content
-    pdf.setFontSize(12);
-
-    pdf.text(`Agent Name: ${person.userName}`, 10, 30);
-    pdf.text(`Token Number: ${person.tokenNumber}`, 10, 40);
-    pdf.text(`Count: ${person.count}`, 10, 50);
-    pdf.text(`Date: ${formatDate(person.date)}`, 10, 60);
-    pdf.text(`Draw Time: ${formatTime(person.drawTime)}`, 10, 70);
-
-    // Add more content as needed
-
-    pdf.save('invoice.pdf');
-  };
+ 
 
   useEffect(() => {
     const fetchUserDetails = async () => {
@@ -196,13 +134,7 @@ const DashboardAgent: React.FC = () => {
 
   return (
     <div className="rounded-sm border border-stroke bg-white px-5 pt-6 pb-2.5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:pb-1">
-      <div className="flex justify-end mb-7">
-        <button className="inline-flex items-center justify-center rounded-full bg-primary py-4 px-10 text-center font-semibold text-white hover:bg-opacity-90 lg:px-5 xl:px-5">
-          <Link to="/addtoken">
-            <FontAwesomeIcon icon={faTicket} /> Add Order
-          </Link>
-        </button>
-      </div>
+     < h2 className="text-2xl font-bold mb-4">Tokens</h2>
 
       <DataTable
         columns={columns}

@@ -151,16 +151,16 @@ const EntityList: React.FC = () => {
     { name: 'Count', selector: (row: { tokenCount: any; }) => row.tokenCount, sortable: true },
     { name: 'Date', selector: (row: { date: string; }) => formatDate(row.date), sortable: true },
     { name: 'Time', selector: (row: { drawTime: any; }) => row.drawTime, sortable: true },
-    {
-      name: 'Action',
-      cell: (row: { _id: string; }) => (
-        <div className="flex items-center justify-center">
-          <button onClick={() => deleteEntry(row._id)}>
-            <FontAwesomeIcon icon={faTrash} />
-          </button>
-        </div>
-      ),
-    },
+    // {
+    //   name: 'Action',
+    //   cell: (row: { _id: string; }) => (
+    //     <div className="flex items-center justify-center">
+    //       <button onClick={() => deleteEntry(row._id)}>
+    //         <FontAwesomeIcon icon={faTrash} />
+    //       </button>
+    //     </div>
+    //   ),
+    // },
   ];
 
   const data = people.map((person, index) => ({
@@ -181,6 +181,8 @@ const EntityList: React.FC = () => {
   return (
     <div className="container mx-auto mt-8">
       <div className="rounded-sm border border-stroke bg-white px-5 pt-6 pb-2.5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:pb-1">
+        
+      <h2 className="text-2xl font-bold mb-4">Tokens</h2>
         <div className="flex flex-col md:flex-row">
           <div className="mb-5 md:mr-5">
             <input
