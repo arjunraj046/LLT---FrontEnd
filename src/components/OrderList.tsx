@@ -164,7 +164,7 @@ const OrderList: React.FC = () => {
           </button>
           <button
             onClick={() =>
-              navigate('/listTokens', { state: { token: row.token ,drawTime:row.drawTime,date:row.formattedDate} })
+              navigate('/orderlist/listTokens', { state: { token: row.token ,drawTime:row.drawTime,date:row.formattedDate} })
             }
             style={{ marginRight: '10px' }}
           >

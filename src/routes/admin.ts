@@ -54,7 +54,7 @@ const coreRoutes = [
     component: DrawTimeSettingsForm,
   },
   {
-    path: '/listTokens',
+    path: '/orderlist/listTokens',
     title: 'listTokens',
     component: OrderTokens,
   },
