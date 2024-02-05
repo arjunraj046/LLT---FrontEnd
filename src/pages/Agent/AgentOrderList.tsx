@@ -240,9 +240,9 @@ const AgentOrderList: React.FC = () => {
           >
             <FontAwesomeIcon icon={faEye} />
           </button>
-          <button onClick={() => handlePrint(row)}>
+          {/* <button onClick={() => handlePrint(row)}>
           <FontAwesomeIcon icon={faPrint} />
-        </button>
+        </button> */}
         </div>
       ),
     },
