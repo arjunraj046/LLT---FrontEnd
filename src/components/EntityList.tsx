@@ -151,16 +151,7 @@ const EntityList: React.FC = () => {
     { name: 'Count', selector: (row: { tokenCount: any; }) => row.tokenCount, sortable: true },
     { name: 'Date', selector: (row: { date: string; }) => formatDate(row.date), sortable: true },
     { name: 'Time', selector: (row: { drawTime: any; }) => row.drawTime, sortable: true },
-    // {
-    //   name: 'Action',
-    //   cell: (row: { _id: string; }) => (
-    //     <div className="flex items-center justify-center">
-    //       <button onClick={() => deleteEntry(row._id)}>
-    //         <FontAwesomeIcon icon={faTrash} />
-    //       </button>
-    //     </div>
-    //   ),
-    // },
+   
   ];
 
   const data = people.map((person, index) => ({
@@ -177,6 +168,17 @@ const EntityList: React.FC = () => {
     columns,
     data,
   };
+
+
+  
+    const conditionalRowStyles = rangeList.map(range => ({
+      when: (row: { tokenCount: any }) => row.tokenCount >= range.startRange && row.tokenCount <= range.endRange,
+      style: {
+        backgroundColor: range.color,
+      },
+    }));
+
+
 
   return (
     <div className="container mx-auto mt-8">
@@ -230,8 +232,9 @@ const EntityList: React.FC = () => {
               columns={columns}
               data={data}
               pagination
-              highlightOnHover
+              // highlightOnHover
               responsive
+              conditionalRowStyles={conditionalRowStyles}
               // paginationComponent={Pagination}
             />
           {/* </DataTableExtensions> */}

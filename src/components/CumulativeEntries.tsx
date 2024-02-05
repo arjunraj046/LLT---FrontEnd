@@ -16,8 +16,11 @@ const CumulativeEntries: React.FC = () => {
   useEffect(() => {
     const fetchDrawTimeList = async () => {
       try {
-        const drawTimeListResponse = await axios.get<any>(`${backend_Url}/api/admin/enitity-draw-time-rang-list`);
+        const drawTimeListResponse = await axios.get<any>(
+          `${backend_Url}/api/admin/enitity-draw-time-rang-list`,
+        );
         setDrawTimeList(drawTimeListResponse.data.drawTimeList || []);
+        // const responseRange = await axios.get<any>(`${backend_Url}/api/admin/enitity-rang-list`);
       } catch (error) {
         console.error('Error fetching draw time list:', error);
       }
@@ -25,7 +28,10 @@ const CumulativeEntries: React.FC = () => {
 
     const fetchRangeList = async () => {
       try {
-        const rangeListResponse = await axios.get<any>(`${backend_Url}/api/admin/enitity-rang-list`);
+        const rangeListResponse = await axios.get<any>(
+          `${backend_Url}/api/admin/enitity-rang-list`,
+        );
+
         setRangeList(rangeListResponse.data.rangeList || []);
       } catch (error) {
         console.error('Error fetching range list:', error);
@@ -38,9 +44,12 @@ const CumulativeEntries: React.FC = () => {
 
   const fetchData = async (params?: any) => {
     try {
-      const response = await axios.get(`${backend_Url}/api/admin/list-entity-cumulative`, {
-        params: params || {},
-      });
+      const response = await axios.get(
+        `${backend_Url}/api/admin/list-entity-cumulative`,
+        {
+          params: params || {},
+        },
+      );
 
       if (response.data.status === 'success') {
         setCumulativeData(response.data.response);
@@ -71,19 +80,31 @@ const CumulativeEntries: React.FC = () => {
     return today.toISOString().split('T')[0];
   }
 
-  function getRangeColor(total: number) {
-    const range = rangeList.find(
-      (range) =>
-        parseInt(total) >= range.startRange &&
-        parseInt(total) <= range.endRange,
-    );
-    return range ? range.color : '';
-  }
+  // function getRangeColor(total: number) {
+  //   const range = rangeList.find(
+  //     (range) =>
+  //       parseInt(total) >= range.startRange &&
+  //       parseInt(total) <= range.endRange,
+  //   );
+  //   return range ? range.color : '';
+  // }
 
   const columns: Column<any>[] = [
-    { name: 'Sl No', selector: (row: any, index: number) => index + 1, sortable: true },
-    { name: 'Token Number', selector: (row: { _id: any; }) => row._id, sortable: true },
-    { name: 'Count', selector: (row: { total: any; }) => row.total, sortable: true },
+    {
+      name: 'Sl No',
+      selector: (row: any, index: number) => index + 1,
+      sortable: true,
+    },
+    {
+      name: 'Token Number',
+      selector: (row: { _id: any }) => row._id,
+      sortable: true,
+    },
+    {
+      name: 'Count',
+      selector: (row: { total: any }) => row.total,
+      sortable: true,
+    },
   ];
 
   const data = cumulativeData.map((entry, index) => ({
@@ -91,12 +112,18 @@ const CumulativeEntries: React.FC = () => {
     index: index + 1,
   }));
 
- 
+  const conditionalRowStyles = rangeList.map((range) => ({
+    when: (row: { total: any }) =>
+      row.total >= range.startRange && row.total <= range.endRange,
+    style: {
+      backgroundColor: range.color,
+    },
+  }));
 
   return (
     <div className="container mx-auto mt-8">
       <div className="rounded-sm border border-stroke bg-white px-5 pt-6 pb-2.5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:pb-1">
-      <h2 className="text-2xl font-bold mb-4">Cumulative Tokens List</h2>
+        <h2 className="text-2xl font-bold mb-4">Cumulative Tokens List</h2>
         <div className="flex flex-col md:flex-row">
           <div className="mb-5 md:mr-5">
             {/* Date Filter */}
@@ -142,7 +169,8 @@ const CumulativeEntries: React.FC = () => {
             columns={columns}
             data={data}
             pagination
-            highlightOnHover
+            // highlightOnHover
+            conditionalRowStyles={conditionalRowStyles}
             responsive
           />
         </div>
