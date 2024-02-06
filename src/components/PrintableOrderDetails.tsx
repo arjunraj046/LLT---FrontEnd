@@ -21,6 +21,7 @@ const PrintableOrderDetails = forwardRef(
       padding: 0;
       font-family: Arial, sans-serif; // Adjust the font as needed
       font-size: 10px; // Adjust the font size as needed
+      color: black;
     }
 
     .token-list {

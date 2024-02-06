@@ -5,15 +5,23 @@ import { user } from '../../redux/reducer/userSlice';
 import DataTable, { Column } from 'react-data-table-component';
 import { backend_Url } from '../../api/server';
 
+interface Range {
+  _id: string;
+  startRange: number;
+  endRange: number;
+  color: string;
+  date: string;
+}
+
+
 const DashboardAgent: React.FC = () => {
   const UserData = useSelector(user);
   console.log('redux data agent dash ', UserData);
 
   const [list, setList] = useState<any[]>([]);
   const [reFetch, setReFetch] = useState<boolean>(false);
-
- 
-
+  const [rangeList, setRangeList] = useState<Range[]>([]);
+  
   useEffect(() => {
     const fetchUserDetails = async () => {
       try {
@@ -33,8 +41,12 @@ const DashboardAgent: React.FC = () => {
             },
           },
         );
+        
         console.log('Response from POST request:', response.data);
         setList(response?.data?.listEntity);
+        const responseRange = await axios.get<any>(`${backend_Url}/api/admin/enitity-rang-list`);
+        const rangeListData = responseRange.data.rangeList || [];
+        setRangeList(rangeListData);
       } catch (error) {
         console.error('Error making POST request:', error);
       }
@@ -131,6 +143,12 @@ const DashboardAgent: React.FC = () => {
     //   ),
     // },
   ];
+  const conditionalRowStyles = rangeList.map(range => ({
+    when: (row: { tokenCount: any }) => row.tokenCount >= range.startRange && row.tokenCount <= range.endRange,
+    style: {
+      backgroundColor: range.color,
+    },
+  }));
 
   return (
     <div className="rounded-sm border border-stroke bg-white px-5 pt-6 pb-2.5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:pb-1">
@@ -143,6 +161,7 @@ const DashboardAgent: React.FC = () => {
         defaultSortFieldId="count"
         pagination
         paginationPerPage={10}
+        conditionalRowStyles={conditionalRowStyles}
       />
     </div>
   );

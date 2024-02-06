@@ -14,6 +14,7 @@ import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import jsPDF from 'jspdf';
 interface Person {
+  orderId: any;
   token: any;
   drawTime: string;
   _id: string;
@@ -38,76 +39,76 @@ const AgentOrderList: React.FC = () => {
   const [selectedPerson, setSelectedPerson] = useState<any | null>(null);
   const [list, setList] = useState<any[]>([]); 
 
-  const handlePrint = (row: { _id: string; token: any }) => {
-    console.log("hii",row);
-    const { _id, token } = row;
-    if (token && token.length > 0) {
-      const orderId = token[0].orderId; 
-      const orderDetails = list.find((order: { _id: string }) => order._id === orderId);
+  // const handlePrint = (row: { _id: string; token: any }) => {
+  //   console.log("hii",row);
+  //   const { _id, token } = row;
+  //   if (token && token.length > 0) {
+  //     const orderId = token[0].orderId; 
+  //     const orderDetails = list.find((order: { _id: string }) => order._id === orderId);
   
-      if (orderDetails) {
-        setSelectedPerson(orderDetails);
-        generatePDF(orderDetails);
-      }
-    }
-  };
+  //     if (orderDetails) {
+  //       setSelectedPerson(orderDetails);
+  //       generatePDF(orderDetails);
+  //     }
+  //   }
+  // };
   
  
 
-  const generatePDF = (orderDetails: any) => {
-    const pdf = new jsPDF();
+  // const generatePDF = (orderDetails: any) => {
+  //   const pdf = new jsPDF();
   
-    const formatDate = (dateString: string) => {
-      const options: Intl.DateTimeFormatOptions = {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-      };
-      return new Date(dateString).toLocaleDateString('en-US', options);
-    };
+  //   const formatDate = (dateString: string) => {
+  //     const options: Intl.DateTimeFormatOptions = {
+  //       year: 'numeric',
+  //       month: 'long',
+  //       day: 'numeric',
+  //     };
+  //     return new Date(dateString).toLocaleDateString('en-US', options);
+  //   };
   
-    const formatTime = (timeString: string) => {
-      const options: Intl.DateTimeFormatOptions = {
-        hour: 'numeric',
-        minute: 'numeric',
-        hour12: true,
-      };
-      return new Date(`2000-01-01 ${timeString}`).toLocaleTimeString(
-        'en-US',
-        options,
-      );
-    };
+  //   const formatTime = (timeString: string) => {
+  //     const options: Intl.DateTimeFormatOptions = {
+  //       hour: 'numeric',
+  //       minute: 'numeric',
+  //       hour12: true,
+  //     };
+  //     return new Date(`2000-01-01 ${timeString}`).toLocaleTimeString(
+  //       'en-US',
+  //       options,
+  //     );
+  //   };
   
  
-    pdf.rect(
-      5,
-      5,
-      pdf.internal.pageSize.getWidth() - 10,
-      pdf.internal.pageSize.getHeight() - 10,
-    );
+  //   pdf.rect(
+  //     5,
+  //     5,
+  //     pdf.internal.pageSize.getWidth() - 10,
+  //     pdf.internal.pageSize.getHeight() - 10,
+  //   );
   
     
-    pdf.setFontSize(16);
-    pdf.text('Order Details', pdf.internal.pageSize.getWidth() / 2, 15, {
-      align: 'center',
-    });
+  //   pdf.setFontSize(16);
+  //   pdf.text('Order Details', pdf.internal.pageSize.getWidth() / 2, 15, {
+  //     align: 'center',
+  //   });
   
-    pdf.setFontSize(12);
+  //   pdf.setFontSize(12);
   
-    pdf.text(`Order ID: ${orderDetails._id}`, 10, 30);
-    pdf.text(`Date: ${formatDate(orderDetails.date)}`, 10, 40);
-    pdf.text(`Draw Time: ${formatTime(orderDetails.drawTime)}`, 10, 50);
+  //   pdf.text(`Order ID: ${orderDetails._id}`, 10, 30);
+  //   pdf.text(`Date: ${formatDate(orderDetails.date)}`, 10, 40);
+  //   pdf.text(`Draw Time: ${formatTime(orderDetails.drawTime)}`, 10, 50);
   
-    // Tokens
-    pdf.text('Tokens:', 10, 70);
-    orderDetails.token.forEach((token: any, index: number) => {
-      const tokenText = `${index + 1}. Token Number: ${token.tokenNumber}, Count: ${token.count}`;
-      pdf.text(tokenText, 10, 80 + index * 10);
-    });
+  //   // Tokens
+  //   pdf.text('Tokens:', 10, 70);
+  //   orderDetails.token.forEach((token: any, index: number) => {
+  //     const tokenText = `${index + 1}. Token Number: ${token.tokenNumber}, Count: ${token.count}`;
+  //     pdf.text(tokenText, 10, 80 + index * 10);
+  //   });
   
-    // Save the PDF
-    pdf.save(`OrderNo_${orderDetails._id}.pdf`);
-  };
+  //   // Save the PDF
+  //   pdf.save(`OrderNo_${orderDetails._id}.pdf`);
+  // };
   
 
   function getInitialDate() {
@@ -189,13 +190,15 @@ const AgentOrderList: React.FC = () => {
     index: number;
     formattedDate: string;
     drawTime: any;
-    _id: any;
+    _id:any;
+    orderId: any;
     token: any; // Change 'any' to the actual type of token
   }[] = people.map((person, index) => ({
     index: index + 1,
     formattedDate: formatDate(person.date),
     drawTime: person.drawTime,
-    _id: person._id,
+    orderId: person.orderId,
+    _id:person._id,
     token: person.token,
   }));
 
@@ -207,7 +210,7 @@ const AgentOrderList: React.FC = () => {
     },
     {
       name: 'Orders',
-      selector: (row: { _id: any }) => row._id,
+      selector: (row: { orderId: any }) => row.orderId,
       sortable: true,
     },
     {
@@ -234,7 +237,7 @@ const AgentOrderList: React.FC = () => {
           </button>
           <button
             onClick={() =>
-              navigate('/listTokens', { state: { token: row.token ,drawTime:row.drawTime,date:row.formattedDate,_id:row._id} })
+              navigate('/listTokens', { state: { token: row.token ,drawTime:row.drawTime,date:row.formattedDate,orderId:row.orderId} })
             }
             style={{ marginRight: '10px' }}
           >

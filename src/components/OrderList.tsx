@@ -10,6 +10,7 @@ import DataTable, { Column } from 'react-data-table-component';
 import { useNavigate } from 'react-router-dom';
 
 interface Person {
+  orderId: any;
   token: any;
   drawTime: string;
   _id: string;
@@ -150,8 +151,14 @@ const OrderList: React.FC = () => {
       sortable: true,
     },
     {
+      name: 'Orders',
+      selector: (row: { orderId: any }) => row.orderId,
+      sortable: true,
+    },
+    {
       name: 'Action',
       cell: (row: {
+        orderId: any;
         token: any;
         drawTime: any;
         formattedDate: any; _id: string 
@@ -165,7 +172,7 @@ const OrderList: React.FC = () => {
           </button>
           <button
             onClick={() =>
-              navigate('/admin/orderlist/listTokens', { state: { token: row.token ,drawTime:row.drawTime,date:row.formattedDate} })
+              navigate('/admin/orderlist/listTokens', { state: { token: row.token ,drawTime:row.drawTime,date:row.formattedDate,orderId:row.orderId} })
             }
             style={{ marginRight: '10px' }}
           >
@@ -198,6 +205,7 @@ const OrderList: React.FC = () => {
     drawTime: person.drawTime,
     _id: person._id,
     token:person.token,
+    orderId:person.orderId,
   }));
 
   return (

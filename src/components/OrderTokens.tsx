@@ -14,7 +14,7 @@ const OrderTokens: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const tokens: Token[] = location.state ? location.state.token : [];
-  const _id = location.state ? location.state._id:'';
+  const orderId = location.state ? location.state.orderId : '';
   const drawTime = location.state ? location.state.drawTime : '';
   const date = location.state ? location.state.date : '';
   const printableOrderDetailsRef = useRef<any>();
@@ -27,6 +27,18 @@ const OrderTokens: React.FC = () => {
       isInitialRender.current = false;
     }
   }, [tokens]);
+  const formatTime = (timeString: { split: (arg0: string) => [any, any] }) => {
+    const [hours, minutes] = timeString.split(':');
+    let period = 'AM';
+    let formattedHours = parseInt(hours, 10);
+
+    if (formattedHours > 12) {
+      formattedHours -= 12;
+      period = 'PM';
+    }
+
+    return `${formattedHours}:${minutes} ${period}`;
+  };
 
   const handleNavigate = () => {
     if (localStorage.getItem('admin')) {
@@ -49,11 +61,13 @@ const OrderTokens: React.FC = () => {
       padding: 0;
       font-family: Arial, sans-serif; // Adjust the font as needed
       font-size: 10px; // Adjust the font size as needed
+      color: black !important;
     }
 
     .token-list {
       list-style: none;
       padding: 0;
+      
     }
 
     .token-item {
@@ -80,10 +94,29 @@ const OrderTokens: React.FC = () => {
             {'Back'}
           </button>
         </div>
-        <div className="flex flex-col mt-10">
+        <div>
           <style>{printStyle}</style>
           <div ref={printableOrderDetailsRef}>
-            <p className="token-list">Order ID: {_id}</p>
+            <ul className="token-list text-black-2">
+              <th>Order ID: {orderId}</th>
+              <li className="token-item">
+                <tr>
+                  <th>DrawTime:{formatTime(drawTime)}</th>
+                </tr>
+                <th>Date: {date}</th>
+              </li>
+              {tokens.map((token, index) => (
+                <li key={index} className="token-item">
+                  <tr>
+                    <td>Token: {token.tokenNumber},</td>
+                    <td> </td>
+                    <td>Count: {token.count}</td>
+                  </tr>
+                </li>
+              ))}
+            </ul>
+
+            {/* <p className="token-list">Order ID: {_id}</p>
             <p className="token-list">DrawTime: {drawTime}</p>
             <p className="token-list">Date: {date}</p>
             <ul className="token-list">
@@ -93,7 +126,7 @@ const OrderTokens: React.FC = () => {
                   <p>Count: {token.count}</p>
                 </li>
               ))}
-            </ul>
+            </ul> */}
           </div>
         </div>
       </div>
