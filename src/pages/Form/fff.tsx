@@ -184,11 +184,23 @@ const EntityForm: React.FC = () => {
                     onChange={(e) => setDrawTime(e.target.value)}
                     className={`rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary w-2/3`}
                   >
-                    {drawTimeList.map((drawTime) => (
-                      <option key={drawTime._id} value={drawTime.drawTime}>
-                        {drawTime.drawTime}
-                      </option>
-                    ))}
+                    {drawTimeList.map((drawTime) => {
+                      // Convert 24-hour format to 12-hour format with AM/PM
+                      const time12hr = new Date(
+                        `1970-01-01T${drawTime.drawTime}:00`,
+                      );
+                      const formattedTime = time12hr.toLocaleString('en-US', {
+                        hour: 'numeric',
+                        minute: 'numeric',
+                        hour12: true,
+                      });
+
+                      return (
+                        <option key={drawTime._id} value={drawTime.drawTime}>
+                          {formattedTime}
+                        </option>
+                      );
+                    })}
                   </select>
                   {errors.drawTime && (
                     <div className="text-meta-1">{errors.drawTime}</div>
@@ -203,7 +215,7 @@ const EntityForm: React.FC = () => {
                     selected={date}
                     onChange={(date) => setDate(date as Date)}
                     className={`rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary w-2/3`}
-                    dateFormat="dd/MM/yyyy" 
+                    dateFormat="dd/MM/yyyy"
                   />
                   {errors.date && (
                     <div className="text-meta-1">{errors.date}</div>
