@@ -20,6 +20,7 @@ interface Person {
   _id: string;
   name: string;
   date: string;
+  total: any;
 }
 
 interface DrawTime {
@@ -192,7 +193,8 @@ const AgentOrderList: React.FC = () => {
     drawTime: any;
     _id:any;
     orderId: any;
-    token: any; // Change 'any' to the actual type of token
+    token: any; 
+    total:any;// Change 'any' to the actual type of token
   }[] = people.map((person, index) => ({
     index: index + 1,
     formattedDate: formatDate(person.date),
@@ -200,6 +202,7 @@ const AgentOrderList: React.FC = () => {
     orderId: person.orderId,
     _id:person._id,
     token: person.token,
+    total: person.total,
   }));
 
   const columns: Column<any>[] = [
@@ -226,7 +229,7 @@ const AgentOrderList: React.FC = () => {
     {
       name: 'Action',
       cell: (row: {
-        [x: string]: any; _id: string; token: any 
+        [x: string]: any; _id: string; token: any ; total:any;
 }) => (
         <div className="flex items-center justify-center">
           <button
@@ -237,7 +240,7 @@ const AgentOrderList: React.FC = () => {
           </button>
           <button
             onClick={() =>
-              navigate('/listTokens', { state: { token: row.token ,drawTime:row.drawTime,date:row.formattedDate,orderId:row.orderId} })
+              navigate('/listTokens', { state: { token: row.token ,drawTime:row.drawTime,date:row.formattedDate,orderId:row.orderId,total:row.total} })
             }
             style={{ marginRight: '10px' }}
           >
