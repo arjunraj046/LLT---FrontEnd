@@ -17,6 +17,7 @@ const OrderTokens: React.FC = () => {
   const orderId = location.state ? location.state.orderId : '';
   const drawTime = location.state ? location.state.drawTime : '';
   const date = location.state ? location.state.date : '';
+  const total = location.state ? location.state.total:'';
   const printableOrderDetailsRef = useRef<any>();
 
   const isInitialRender = useRef(true);
@@ -100,10 +101,11 @@ const OrderTokens: React.FC = () => {
             <ul className="token-list text-black-2">
               <th>Order ID: {orderId}</th>
               <li className="token-item">
+               <th>DrawTime:{formatTime(drawTime)}</th>
                 <tr>
-                  <th>DrawTime:{formatTime(drawTime)}</th>
+                  <th>Date: {date}</th>
                 </tr>
-                <th>Date: {date}</th>
+                
               </li>
               {tokens.map((token, index) => (
                 <li key={index} className="token-item">
@@ -114,6 +116,8 @@ const OrderTokens: React.FC = () => {
                   </tr>
                 </li>
               ))}
+              <td>----------------</td>
+              <th>Total: {total}</th>
             </ul>
 
             {/* <p className="token-list">Order ID: {_id}</p>
