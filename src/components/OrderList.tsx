@@ -14,7 +14,7 @@ interface Person {
   token: any;
   drawTime: string;
   _id: string;
-  username: string;
+  userFullName: string;
   date: string;
   
 }
@@ -200,7 +200,7 @@ const OrderList: React.FC = () => {
 
   const data = people.map((person, index) => ({
     index: index + 1,
-    name: person.username,
+    name: person.userFullName,
     formattedDate: formatDate(person.date),
     drawTime: person.drawTime,
     _id: person._id,

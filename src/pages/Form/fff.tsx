@@ -27,7 +27,7 @@ const validationSchema = Yup.object().shape({
       tokenNumber: Yup.string()
         .required('Token Number is required')
         .matches(
-          /^[1-9]{1,2}$/,
+          /^[1-9][0-9]{0,2}$/,
           'Token Number must be a number between 1 and 99',
         ),
       count: Yup.string()
@@ -203,6 +203,7 @@ const EntityForm: React.FC = () => {
                     selected={date}
                     onChange={(date) => setDate(date as Date)}
                     className={`rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary w-2/3`}
+                    dateFormat="dd/MM/yyyy" 
                   />
                   {errors.date && (
                     <div className="text-meta-1">{errors.date}</div>
