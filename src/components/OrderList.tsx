@@ -16,6 +16,7 @@ interface Person {
   _id: string;
   userFullName: string;
   date: string;
+  total:any;
   
 }
 
@@ -161,6 +162,7 @@ const OrderList: React.FC = () => {
         orderId: any;
         token: any;
         drawTime: any;
+        total:any;
         formattedDate: any; _id: string 
 }) => (
         <div className="flex items-center justify-center">
@@ -172,7 +174,7 @@ const OrderList: React.FC = () => {
           </button>
           <button
             onClick={() =>
-              navigate('/admin/orderlist/listTokens', { state: { token: row.token ,drawTime:row.drawTime,date:row.formattedDate,orderId:row.orderId} })
+              navigate('/admin/orderlist/listTokens', { state: { token: row.token ,drawTime:row.drawTime,date:row.formattedDate,orderId:row.orderId,total:row.total} })
             }
             style={{ marginRight: '10px' }}
           >
@@ -206,6 +208,7 @@ const OrderList: React.FC = () => {
     _id: person._id,
     token:person.token,
     orderId:person.orderId,
+    total: person.total,
   }));
 
   return (
