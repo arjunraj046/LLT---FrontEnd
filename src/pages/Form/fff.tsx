@@ -27,7 +27,7 @@ const validationSchema = Yup.object().shape({
       tokenNumber: Yup.string()
         .required('Token Number is required')
         .matches(
-          /^(0*[1-9][0-9]{0,2}|[1-9][0-9]{0,2})$/,
+          /^(0*[0-9]{1,3}|0+)$/,
           'Token Number must be a number between 1 and 999 with optional leading zeros',
         ),
       count: Yup.string()
