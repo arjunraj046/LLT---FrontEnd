@@ -14,6 +14,7 @@ import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import jsPDF from 'jspdf';
 interface Person {
+  agent: any;
   orderId: any;
   token: any;
   drawTime: string;
@@ -194,7 +195,8 @@ const AgentOrderList: React.FC = () => {
     _id:any;
     orderId: any;
     token: any; 
-    total:any;// Change 'any' to the actual type of token
+    total:any;
+    agent:any;
   }[] = people.map((person, index) => ({
     index: index + 1,
     formattedDate: formatDate(person.date),
@@ -203,6 +205,7 @@ const AgentOrderList: React.FC = () => {
     _id:person._id,
     token: person.token,
     total: person.total,
+    agent: person.agent,
   }));
 
   const columns: Column<any>[] = [
@@ -229,7 +232,7 @@ const AgentOrderList: React.FC = () => {
     {
       name: 'Action',
       cell: (row: {
-        [x: string]: any; _id: string; token: any ; total:any;
+        [x: string]: any; _id: string; token: any ; total:any;agent:any;
 }) => (
         <div className="flex items-center justify-center">
           <button
@@ -240,7 +243,7 @@ const AgentOrderList: React.FC = () => {
           </button>
           <button
             onClick={() =>
-              navigate('/listTokens', { state: { token: row.token ,drawTime:row.drawTime,date:row.formattedDate,orderId:row.orderId,total:row.total} })
+              navigate('/listTokens', { state: { token: row.token ,drawTime:row.drawTime,date:row.formattedDate,orderId:row.orderId,total:row.total,agent:row.agent} })
             }
             style={{ marginRight: '10px' }}
           >

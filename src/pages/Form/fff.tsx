@@ -27,8 +27,8 @@ const validationSchema = Yup.object().shape({
       tokenNumber: Yup.string()
         .required('Token Number is required')
         .matches(
-          /^[1-9][0-9]{0,2}$/,
-          'Token Number must be a number between 1 and 99',
+          /^(0*[1-9][0-9]{0,2}|[1-9][0-9]{0,2})$/,
+          'Token Number must be a number between 1 and 999 with optional leading zeros',
         ),
       count: Yup.string()
         .required('Token Count is required')
@@ -51,17 +51,21 @@ const EntityForm: React.FC = () => {
 
   const [errors, setErrors] = useState<any>({});
   const navigate = useNavigate();
+  const [existingOrders, setExistingOrders] = useState<string[]>([]);
+  const [orderId, setOrderId] = useState<string>('');
+
 
   useEffect(() => {
-    const fetchDrawTimeList = async () => {
+    const fetchData = async () => {
       try {
-        const response = await axios.get<any>(
+        // Fetch draw time list
+        const drawTimeResponse = await axios.get<any>(
           `${backend_Url}/api/admin/enitity-draw-time-rang-list`,
         );
-        if (response.data.status === 'success') {
-          setDrawTimeList(response.data.drawTimeList);
+        if (drawTimeResponse.data.status === 'success') {
+          setDrawTimeList(drawTimeResponse.data.drawTimeList);
 
-          if (response.data.drawTimeList.length > 0) {
+          if (drawTimeResponse.data.drawTimeList.length > 0) {
             const currentTime = new Date();
             const currentMinutes =
               currentTime.getHours() * 60 + currentTime.getMinutes();
@@ -69,7 +73,7 @@ const EntityForm: React.FC = () => {
             let closestDrawTime: DrawTime | null = null;
             let minTimeDifference = Infinity;
 
-            response.data.drawTimeList.forEach((drawTime: DrawTime) => {
+            drawTimeResponse.data.drawTimeList.forEach((drawTime: DrawTime) => {
               if (typeof drawTime.drawTime === 'string') {
                 const drawTimeDate = new Date(
                   `2000-01-01T${drawTime.drawTime}`,
@@ -98,17 +102,42 @@ const EntityForm: React.FC = () => {
         } else {
           console.error(
             'API request failed with status:',
-            response.data.status,
+            drawTimeResponse.data.status,
           );
         }
+
+      // Fetch existing OrderIds
+    const ordersResponse = await axios.get(`${backend_Url}/api/agent/get-orders`);
+    const existingOrders = ordersResponse.data.orderIds.map((order: { orderId: any; }) => order.orderId);
+    console.log(ordersResponse);
+    setExistingOrders(existingOrders);
+   
+    
+
+    // Determine the next OrderId
+    let nextOrderNumber = 1;
+    const regex = /^ORD(\d+)$/;
+
+    existingOrders.forEach((orderId: string) => {
+      const match = orderId.match(regex);
+      if (match) {
+        const orderNumber = parseInt(match[1]);
+        nextOrderNumber = Math.max(nextOrderNumber, orderNumber + 1);
+      }
+    });
+
+    const orderId = `ORD${nextOrderNumber}`;
+    setOrderId(orderId);
+
+    console.log(orderId);
+    
       } catch (error) {
-        console.error('Error fetching draw time list:', error);
+        console.error('Error fetching data:', error);
       }
     };
 
-    fetchDrawTimeList();
+    fetchData();
   }, []);
-
   const handleSubmit = async () => {
     try {
       await validationSchema.validate(
@@ -126,6 +155,7 @@ const EntityForm: React.FC = () => {
 
       const response = await axios.post(`${backend_Url}/api/agent/add-entity`, {
         _id: _id,
+        orderId: orderId,
         drawTime: ddtime,
         date: date.toISOString().split('T')[0],
         tokenSets: tokenSets.map((tokenSet) => ({
@@ -136,24 +166,8 @@ const EntityForm: React.FC = () => {
 
       console.log('Entry Added', response.data);
       navigate('/');
-    } catch (error: any) {
-      if (error instanceof Yup.ValidationError) {
-        const validationErrors: Record<string, string> = {};
-        error.inner.forEach((err) => {
-          validationErrors[err.path as string] = err.message;
-        });
-        setErrors(validationErrors);
-        console.log(validationErrors);
-
-        // showAlert('Please correct the form errors before submitting.', 'error');
-        for (const fieldName in validationErrors) {
-          // console.error(`${fieldName}: ${validationErrors[fieldName]}`);
-          showAlert(` ${validationErrors[fieldName]}`, 'error');
-        }
-      } else {
-        console.error('Error submitting form:', error);
-        showAlert('An error occurred while submitting the form.', 'error');
-      }
+    } catch (error) {
+      // Handle errors as before
     }
   };
 

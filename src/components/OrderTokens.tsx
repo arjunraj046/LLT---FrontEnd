@@ -18,6 +18,7 @@ const OrderTokens: React.FC = () => {
   const drawTime = location.state ? location.state.drawTime : '';
   const date = location.state ? location.state.date : '';
   const total = location.state ? location.state.total:'';
+  const agent = location.state ? location.state.agent:'';
   const printableOrderDetailsRef = useRef<any>();
 
   const isInitialRender = useRef(true);
@@ -99,13 +100,15 @@ const OrderTokens: React.FC = () => {
           <style>{printStyle}</style>
           <div ref={printableOrderDetailsRef}>
             <ul className="token-list text-black-2">
-              <th>Order ID: {orderId}</th>
+              <tr>
+                <th>Order No: {orderId}</th>
+                </tr>
+              <tr><th>Agent:{agent}</th></tr>
               <li className="token-item">
-               <th>DrawTime:{formatTime(drawTime)}</th>
+               <th>Draw Time:{formatTime(drawTime)}</th>
                 <tr>
                   <th>Date: {date}</th>
                 </tr>
-                
               </li>
               {tokens.map((token, index) => (
                 <li key={index} className="token-item">
@@ -116,8 +119,11 @@ const OrderTokens: React.FC = () => {
                   </tr>
                 </li>
               ))}
-              <td>----------------</td>
+              <tr>-----------------------------</tr>
+              <tr>
               <th>Total: {total}</th>
+              </tr>
+             
             </ul>
 
             {/* <p className="token-list">Order ID: {_id}</p>
