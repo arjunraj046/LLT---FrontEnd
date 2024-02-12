@@ -160,6 +160,7 @@ const OrderList: React.FC = () => {
     {
       name: 'Action',
       cell: (row: {
+        userFullName: any;
         agent: any;
         orderId: any;
         token: any;
@@ -176,7 +177,7 @@ const OrderList: React.FC = () => {
           </button>
           <button
             onClick={() =>
-              navigate('/admin/orderlist/listTokens', { state: { token: row.token ,drawTime:row.drawTime,date:row.formattedDate,orderId:row.orderId,total:row.total,agent:row.agent} })
+              navigate('/admin/orderlist/listTokens', { state: { token: row.token ,drawTime:row.drawTime,date:row.formattedDate,orderId:row.orderId,total:row.total,agent:row.userFullName} })
             }
             style={{ marginRight: '10px' }}
           >
@@ -211,7 +212,7 @@ const OrderList: React.FC = () => {
     token:person.token,
     orderId:person.orderId,
     total: person.total,
-    agent: person.userFullName,
+    userFullName: person.userFullName,
   }));
 
   return (
