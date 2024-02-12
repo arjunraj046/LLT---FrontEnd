@@ -211,7 +211,7 @@ const OrderList: React.FC = () => {
     token:person.token,
     orderId:person.orderId,
     total: person.total,
-    agent: person.agent,
+    agent: person.userFullName,
   }));
 
   return (
