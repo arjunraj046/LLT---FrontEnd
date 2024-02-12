@@ -19,6 +19,7 @@ const DashboardAgent: React.FC = () => {
   console.log('redux data agent dash ', UserData);
 
   const [list, setList] = useState<any[]>([]);
+  const [total, setTotal] = useState<any[]>([]);
   const [reFetch, setReFetch] = useState<boolean>(false);
   const [rangeList, setRangeList] = useState<Range[]>([]);
   
@@ -44,6 +45,7 @@ const DashboardAgent: React.FC = () => {
         
         console.log('Response from POST request:', response.data);
         setList(response?.data?.listEntity);
+        setTotal(response?.data?.total);
         const responseRange = await axios.get<any>(`${backend_Url}/api/admin/enitity-rang-list`);
         const rangeListData = responseRange.data.rangeList || [];
         setRangeList(rangeListData);
@@ -163,6 +165,7 @@ const DashboardAgent: React.FC = () => {
         paginationPerPage={10}
         conditionalRowStyles={conditionalRowStyles}
       />
+      <h2>Total Tickets:{total}</h2>
     </div>
   );
 };

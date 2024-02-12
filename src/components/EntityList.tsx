@@ -6,6 +6,7 @@ import { faTrash } from '@fortawesome/free-solid-svg-icons';
 import { showAlert } from '../components/tosterComponents/tost';
 import DataTable, { Column } from 'react-data-table-component';
 import { backend_Url } from '../../src/api/server';
+import { user } from '../redux/reducer/userSlice';
 // import DataTableExtensions from 'react-data-table-component-extensions';
 // import 'react-data-table-component-extensions/dist/index.css';
 // import Pagination from 'react-data-table-component-extensions';
@@ -15,6 +16,7 @@ interface Person {
   _id: string;
   name: string;
   username: string;
+  userFullName: string;
   colour: string;
   tokenCount: string;
   tokenNumber: string;
@@ -52,6 +54,7 @@ const EntityList: React.FC = () => {
   const [noRecordsFound, setNoRecordsFound] = useState<boolean>(false);
   const [dateFilter, setDateFilter] = useState<string>(getInitialDate());
   const [searchTerm, setSearchTerm] = useState<string>('');
+  const [username, setUserName] = useState<string>('');
   const [drawTimeList, setDrawTimeList] = useState<DrawTime[]>([]);
   const [drawTime, setDrawTime] = useState<string>('');
 
@@ -66,6 +69,7 @@ const EntityList: React.FC = () => {
     dateFilter?: string;
     tokenNumber?: string;
     drawTime?: string;
+    username?:string;
   }) => {
     try {
       const responsePeople = await axios.get(`${backend_Url}/api/admin/search-list-entity`, { params: params || {} });
@@ -113,9 +117,9 @@ const EntityList: React.FC = () => {
 
   useEffect(() => {
     if (!isInitialRender.current) {
-      fetchData({ dateFilter, tokenNumber: searchTerm, drawTime });
+      fetchData({ dateFilter, tokenNumber: searchTerm, drawTime,username:username });
     }
-  }, [dateFilter, searchTerm, drawTime, reFetch]);
+  }, [dateFilter, searchTerm, drawTime, reFetch,username]);
 
   const formatDate = (isoDateString: string) => {
     const dateObject = new Date(isoDateString);
@@ -205,6 +209,15 @@ const EntityList: React.FC = () => {
               className="rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary w-full md:w-50"
             />
           </div>
+          <div className="mb-5 md:mr-5">
+            <input
+              type="text"
+              value={username}
+              onChange={(e) => setUserName(e.target.value)}
+              placeholder="Enter user"
+              className="rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary w-full md:w-50"
+            />
+          </div>
 
           <div className="mb-5 md:mr-5">
             <select
@@ -238,6 +251,7 @@ const EntityList: React.FC = () => {
               // paginationComponent={Pagination}
             />
           {/* </DataTableExtensions> */}
+          <h2>Total Tickets:{totalCount}</h2>
         </div>
       </div>
     </div>
