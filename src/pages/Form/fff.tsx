@@ -187,7 +187,7 @@ const EntityForm: React.FC = () => {
                   Add Token
                 </h3>
               </div>
-              <div className="flex flex-col gap-5.5 p-6.5">
+              <div className="flex flex-col gap-1 pl-6.5">
                 <div>
                   <label className="mb-3 block text-black dark:text-white">
                     Draw Time
@@ -238,7 +238,7 @@ const EntityForm: React.FC = () => {
               </div>
 
               {tokenSets.map((tokenSet, index) => (
-                <div key={index} className="flex flex-col gap-5.5 p-6.5">
+                <div key={index} className="flex flex-col gap-1 pl-6.5">
                   <h2>Token {index + 1}</h2>
 
                   <div>
