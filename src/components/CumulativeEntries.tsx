@@ -63,6 +63,8 @@ const CumulativeEntries: React.FC = () => {
           },
         },
       );
+      console.log("response",response);
+      
 
       if (response.data.status === 'success') {
         setCumulativeData(response.data.response);
@@ -85,7 +87,7 @@ const CumulativeEntries: React.FC = () => {
     },
     {
       name: 'Token Number',
-      selector: (row: { _id: any }) => row._id,
+      selector: (row: { tokenNumber: any }) => row.tokenNumber,
       sortable: true,
     },
     {
