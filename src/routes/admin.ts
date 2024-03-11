@@ -4,13 +4,16 @@ import { lazy } from 'react';
 // const EntityForm = lazy(() => import('../pages/Form/EntityForm'));
 const RegistrationForm = lazy(() => import('../pages/Form/RegistrationForm'));
 const SettingsForm = lazy(() => import('../pages/Form/SettingsForm'));
-const DrawTimeSettingsForm = lazy(() => import('../pages/Form/DrawTimeSettingsForm'));
+const DrawTimeSettingsForm = lazy(
+  () => import('../pages/Form/DrawTimeSettingsForm'),
+);
 const entity = lazy(() => import('../components/Entries'));
 const Settings = lazy(() => import('../pages/Settings'));
+const AddOrder = lazy(() => import('../components/ImportOrder'));
 const Users = lazy(() => import('../pages/Users'));
-const EditAgentProfile= lazy(() => import('../pages/editProfile'));
-const EditAgentPassword = lazy(() => import('../pages/editpassword')); 
-const OrderTokens = lazy(() => import('../components/OrderTokens')); 
+const EditAgentProfile = lazy(() => import('../pages/editProfile'));
+const EditAgentPassword = lazy(() => import('../pages/editpassword'));
+const OrderTokens = lazy(() => import('../components/OrderTokens'));
 
 const coreRoutes = [
   {
@@ -58,7 +61,11 @@ const coreRoutes = [
     title: 'listTokens',
     component: OrderTokens,
   },
- 
+  {
+    path: '/orders',
+    title: 'AddOrder',
+    component: AddOrder,
+  },
 ];
 
 const adminRouteSet = [...coreRoutes];
