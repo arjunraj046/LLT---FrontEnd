@@ -69,7 +69,7 @@ const SignIn = () => {
 
       if (user.userRole === 1) {
         localStorage.setItem('admin', token);
-        localStorage.setItem('adminId', user?._id);
+        // localStorage.setItem('adminId', user?._id);
 
         navigate('/admin');
       } else if (user.userRole === 2) {
