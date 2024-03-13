@@ -9,7 +9,7 @@ const DrawTimeSettingsForm = lazy(
 );
 const entity = lazy(() => import('../components/Entries'));
 const Settings = lazy(() => import('../pages/Settings'));
-const AddOrder = lazy(() => import('../components/ImportOrder'));
+const AddOrder = lazy(() => import('../components/Order/Orders'));
 const Users = lazy(() => import('../pages/Users'));
 const EditAgentProfile = lazy(() => import('../pages/editProfile'));
 const EditAgentPassword = lazy(() => import('../pages/editpassword'));
