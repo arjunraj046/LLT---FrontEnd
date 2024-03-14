@@ -49,11 +49,14 @@ const ImportedOrderList: React.FC = () => {
   const fetchData = async (params?: {
     dateFilter?: string;
     drawTime?: string;
+    isImport?: number;
   }) => {
     try {
       const responsePeople = await axios.get(
         `${backend_Url}/api/admin/search-list-order`,
-        { params: params || {} },
+        { params: {
+          ...params,
+          isImport: 1, } },
       );
       const drawTimeRange = await axios.get<any>(
         `${backend_Url}/api/admin/enitity-draw-time-rang-list`,

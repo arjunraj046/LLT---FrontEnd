@@ -67,9 +67,13 @@ const TokenList: React.FC = () => {
     tokenNumber?: string;
     drawTime?: string;
     username?:string;
+    isImport?:number;
   }) => {
     try {
-      const responsePeople = await axios.get(`${backend_Url}/api/admin/search-list-entity`, { params: params || {} });
+      const responsePeople = await axios.get(`${backend_Url}/api/admin/search-list-entity`, {  params: {
+        ...params,
+        isImport: 1, 
+      }  });
       const responseRange = await axios.get<any>(`${backend_Url}/api/admin/enitity-rang-list`);
       const drawTimeRange = await axios.get<any>(`${backend_Url}/api/admin/enitity-draw-time-rang-list`);
 

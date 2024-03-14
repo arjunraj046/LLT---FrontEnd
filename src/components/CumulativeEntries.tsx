@@ -60,6 +60,7 @@ const CumulativeEntries: React.FC = () => {
             dateFilter: startDate,
             tokenNumber,
             drawTime,
+            isImport:0,
           },
         },
       );
