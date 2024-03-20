@@ -2,7 +2,7 @@ import { toast } from 'react-hot-toast';
 
 type AlertType = 'info' | 'success' | 'error';
 
-export const showAlert = (message: string, type: AlertType) => {
+export const showAlert = (message: string, type: AlertType, duration: number = 900) => {
   let alertColor: string;
   let icon: JSX.Element;
 
@@ -26,18 +26,18 @@ export const showAlert = (message: string, type: AlertType) => {
   }
 
   toast((t) => (
-    // <div className={`rounded-sm border border-stroke bg-white p-4 shadow-default dark:border-strokedark md:p-6 xl:p-9 ${alertColor}`}>
-      <div className={`flex w-full border-l-6 ${alertColor} px-7 py-8 shadow-md dark:bg-[#1B1B24] dark:bg-opacity-30 md:p-9`}>
-        <div className="mr-5 flex h-6 w-9 items-center justify-center rounded-lg bg-[15%]">
-          {icon}
-        </div>
-        <div className="w-full">
-          <h5 className="mb-3 text-lg font-semibold text-[#9D5425]">
-            {type.charAt(0).toUpperCase() + type.slice(1)}
-          </h5>
-          <p className="leading-relaxed text-[#D0915C]">{message}</p>
-        </div>
+    <div className={`flex w-full border-l-6 ${alertColor} px-7 py-8 shadow-md dark:bg-[#1B1B24] dark:bg-opacity-30 md:p-9`}>
+      <div className="mr-5 flex h-6 w-9 items-center justify-center rounded-lg bg-[15%]">
+        {icon}
       </div>
-    // </div>
-  ));
+      <div className="w-full">
+        <h5 className="mb-3 text-lg font-semibold text-[#9D5425]">
+          {type.charAt(0).toUpperCase() + type.slice(1)}
+        </h5>
+        <p className="leading-relaxed text-[#D0915C]">{message}</p>
+      </div>
+    </div>
+  ), {
+    duration: duration, // Set the duration in milliseconds
+  });
 };

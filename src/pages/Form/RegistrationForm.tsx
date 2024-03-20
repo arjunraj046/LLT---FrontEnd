@@ -5,6 +5,7 @@ import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { showAlert } from '../../components/tosterComponents/tost';
+import { backend_Url } from '../../api/server';
 
 const FormLayout = () => {
   const navigate = useNavigate();
@@ -58,7 +59,7 @@ const FormLayout = () => {
   const onSubmit = async (data: FormValues) => {
     try {
       const response = await axios.post(
-        'http://13.233.114.61:5000/api/admin/agent-register',
+        `${backend_Url}/api/admin/agent-register`,
         data,
       );
       console.log('User registered:', response.data);

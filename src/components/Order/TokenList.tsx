@@ -1,12 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import * as Yup from 'yup';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTrash } from '@fortawesome/free-solid-svg-icons';
-import { showAlert } from '../components/tosterComponents/tost';
+import { showAlert } from '../../components/tosterComponents/tost';
 import DataTable, { Column } from 'react-data-table-component';
-import { backend_Url } from '../../src/api/server';
-import { user } from '../redux/reducer/userSlice';
+import { backend_Url } from '../../api/server';
 // import DataTableExtensions from 'react-data-table-component-extensions';
 // import 'react-data-table-component-extensions/dist/index.css';
 // import Pagination from 'react-data-table-component-extensions';
@@ -46,7 +43,7 @@ const validationSchema = Yup.object().shape({
   dateFilter: Yup.string(),
 });
 
-const EntityList: React.FC = () => {
+const TokenList: React.FC = () => {
   const [people, setPeople] = useState<Person[]>([]);
   const [rangeList, setRangeList] = useState<Range[]>([]);
   const [totalCount, setTotalCount] = useState<number>(0);
@@ -73,9 +70,10 @@ const EntityList: React.FC = () => {
     isImport?:number;
   }) => {
     try {
-      const responsePeople = await axios.get(`${backend_Url}/api/admin/search-list-entity`, { params: {
+      const responsePeople = await axios.get(`${backend_Url}/api/admin/search-list-entity`, {  params: {
         ...params,
-        isImport: 0, } });
+        isImport: 1, 
+      }  });
       const responseRange = await axios.get<any>(`${backend_Url}/api/admin/enitity-rang-list`);
       const drawTimeRange = await axios.get<any>(`${backend_Url}/api/admin/enitity-draw-time-rang-list`);
 
@@ -261,4 +259,4 @@ const EntityList: React.FC = () => {
   );
 };
 
-export default EntityList;
+export default TokenList;

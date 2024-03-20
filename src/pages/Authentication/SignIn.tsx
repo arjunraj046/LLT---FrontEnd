@@ -7,6 +7,7 @@ import { showAlert } from '../../components/tosterComponents/tost';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm } from 'react-hook-form';
+import { backend_Url } from '../../api/server';
 
 const signInSchema = yup.object().shape({
   userName: yup
@@ -51,8 +52,8 @@ const SignIn = () => {
     setCredentials(data);
     try {
       const response = await axios.post(
-        'http://13.233.114.61:5000/api/auth/login',
-        data,
+        `${backend_Url}/api/auth/login`,
+        data
       );
       const { token, user } = response.data;
       const userdata = {
@@ -68,6 +69,7 @@ const SignIn = () => {
 
       if (user.userRole === 1) {
         localStorage.setItem('admin', token);
+        localStorage.setItem('adminId', user?._id);
 
         navigate('/admin');
       } else if (user.userRole === 2) {
@@ -83,7 +85,7 @@ const SignIn = () => {
       }
 
       console.log('Login successful!', response.data);
-    } catch (error: any) {
+    } catch (error:any) {
       showAlert(error?.response?.data?.error, 'error');
       console.error('Error logging in:' + error?.response?.data?.error, error);
     }
